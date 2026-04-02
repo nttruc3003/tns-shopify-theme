@@ -1,0 +1,28 @@
+{% assign host = request.host | downcase %}
+
+{%- if request.page_type == 'index' and request.path == '/' -%}
+  {% case host %}
+
+    {% when 'rockydinh.teamnailsupply.com' %}
+      <script>window.location.replace('/pages/rocky-dinh');</script>
+
+    {% when 'quangdo.teamnailsupply.com' %}
+      <script>window.location.replace('/pages/quang-do');</script>
+
+    {% when 'thuannguyen.teamnailsupply.com' %}
+      <script>window.location.replace('/pages/thuan-nguyen');</script>
+
+    {% when 'nhanly.teamnailsupply.com' %}
+      <script>window.location.replace('/pages/nhan-ly');</script>
+
+    {% when 'khangduong.teamnailsupply.com' %}
+      <script>window.location.replace('/pages/khang-duong');</script>
+
+    {% when 'toannguyen.teamnailsupply.com' %}
+      <script>window.location.replace('/pages/toan-nguyen');</script>
+
+    {% when 'cherrybynails.teamnailsupply.com' %}
+      <script>window.location.replace('/pages/cherrybynails');</script>
+
+  {% endcase %}
+{%- endif -%}

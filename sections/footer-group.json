@@ -1,0 +1,226 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "footer",
+  "name": "Footer Group",
+  "sections": {
+    "6b1e0902-ba21-475f-a393-eafea2e03a77": {
+      "type": "newsletter",
+      "blocks": {
+        "198ddeb0-8363-46dd-a9b3-b4defed6dcf9": {
+          "type": "newsletter",
+          "settings": {
+            "section_title": "",
+            "section_title_font_size": 28,
+            "section_title_font_size_mb": 18,
+            "section_title_font_weight": "600",
+            "section_title_text_transform": "none",
+            "section_title_font_style": "normal",
+            "section_title_color": "#ffffff",
+            "mg_bottom_title": 12,
+            "mg_bottom_title_mb": 12,
+            "section_description": "<p>Be the first to know about our new collections,<strong> exclusive promotions</strong> and more.</p>",
+            "section_description_font_size": 16,
+            "section_description_font_size_mb": 14,
+            "section_description_font_weight": "500",
+            "section_description_color": "#ffffff",
+            "margin_bottom_des": 0,
+            "des_line_height": 20,
+            "show_input_field": false,
+            "input_style": "style_1",
+            "input_width": 450,
+            "input_border_radius": 0,
+            "input_text_font_size": 13,
+            "button_text": "Sign Up",
+            "button_font_size": 16,
+            "button_width": 150,
+            "button_text_color": "#000000",
+            "button_border_color": "#ffffff",
+            "button_background_color": "#ffffff",
+            "button_gradient_color": "",
+            "button_text_color_hover": "#ffffff",
+            "button_border_color_hover": "#232323",
+            "button_background_color_hover": "#232323",
+            "button_gradient_color_hover": "",
+            "button_text_transform": "capitalize",
+            "button_font_weight": "600",
+            "input_placeholder": "Your email address",
+            "input_placeholder_color": "#191919",
+            "input_background_color": "rgba(0,0,0,0)",
+            "input_border_color": "#333333",
+            "form_gap": 15,
+            "newsletter_content_direction": "row",
+            "newsletter_form_justify_content": "center",
+            "input_width_behavior": "restricted"
+          }
+        }
+      },
+      "block_order": [
+        "198ddeb0-8363-46dd-a9b3-b4defed6dcf9"
+      ],
+      "settings": {
+        "container": "container",
+        "padding_full_width": 0,
+        "background": "#1e1e1e",
+        "background_gradient": "",
+        "section_text_align": "center",
+        "justify_section_content": "center",
+        "section_item_distance": 20,
+        "enable_social_media_below": false,
+        "mg_top_desktop": 35,
+        "mg_top_tablet": 25,
+        "mg_top_mobile": 20,
+        "mg_bottom_desktop": 35,
+        "mg_bottom_tablet": 25,
+        "mg_bottom_mobile": 20
+      }
+    },
+    "7eedcb28-e49a-440c-8084-783dd80dcea3": {
+      "type": "footer-07",
+      "blocks": {
+        "sections--14855161806899__7eedcb28-e49a-440c-8084-783dd80dcea3-16768803545575a6a6-0": {
+          "type": "text",
+          "settings": {
+            "custom_width": "22",
+            "heading": "",
+            "logo_margin_bottom": 28,
+            "logo_margin_top": -60,
+            "subtext": "<p><strong>TEAM NAIL SUPPLY</strong></p>",
+            "address_icon": "point_icon",
+            "show_address_icon": false,
+            "address_text": "<p>9191 Bolsa Ave, Unit 119, </p><p>Westminster, CA 92683, United States</p>",
+            "phone_icon": "message_icon",
+            "show_phone_icon": false,
+            "phone_text": "",
+            "email_icon": "envelope_icon",
+            "show_email_icon": false,
+            "email_text": "<p>Email: <a href=\"mailto:email@domain.com\">email@teamnailsupply.com</a></p>",
+            "icon_size": 16,
+            "icon_color": "",
+            "content_spacing": 12,
+            "mg_bottom": 0
+          }
+        },
+        "sections--14855161806899__7eedcb28-e49a-440c-8084-783dd80dcea3-16768803545575a6a6-1": {
+          "type": "link_list",
+          "settings": {
+            "custom_width": "11",
+            "heading": "Help",
+            "menu": "main-menu",
+            "mg_bottom": 0
+          }
+        },
+        "sections--14855161806899__7eedcb28-e49a-440c-8084-783dd80dcea3-16768803545575a6a6-2": {
+          "type": "link_list",
+          "settings": {
+            "custom_width": "11",
+            "heading": "About",
+            "menu": "main-menu",
+            "mg_bottom": 0
+          }
+        },
+        "sections--14855161806899__7eedcb28-e49a-440c-8084-783dd80dcea3-16768803545575a6a6-3": {
+          "type": "link_list",
+          "settings": {
+            "custom_width": "11",
+            "heading": "Account",
+            "menu": "main-menu",
+            "mg_bottom": 0
+          }
+        },
+        "51e3b5cf-c78a-4510-bb21-941a595721dc": {
+          "type": "footer_bottom",
+          "settings": {
+            "pdtop_footer_bottom": 20,
+            "pdbottom_footer_bottom": 21,
+            "border_top": false,
+            "footer_bottom_color": "#808080",
+            "border_top_color": "rgba(0,0,0,0)",
+            "footer_bottom_bg": "#f6f6f6",
+            "footer_bottom_bg_gradient": "",
+            "show_copyright": true,
+            "enable_layout_grid": true,
+            "copyright_content": "<p>@ 2025 TeamNailSupply</p>",
+            "copyright_content_color": "#5a5a5a",
+            "show_payment": true,
+            "payment_margin_top": 0,
+            "heading_payment": "",
+            "payment_type": "custom",
+            "show_payment_visa": true,
+            "show_payment_master": true,
+            "show_payment_maestro": false,
+            "show_payment_american_express": true,
+            "show_payment_apple_pay": true,
+            "show_payment_bitcoin": false,
+            "show_payment_dankort": false,
+            "show_payment_diners_club": false,
+            "show_payment_discover": true,
+            "show_payment_paypal": true,
+            "show_payment_dogecoin": false,
+            "show_payment_dwolla": false,
+            "show_payment_forbrugsforeningen": false,
+            "show_payment_jcb": false,
+            "show_payment_litecoin": false,
+            "show_payment_afterpay": false,
+            "show_payment_google_pay": false,
+            "show_payment_ideal": false,
+            "show_payment_klarna": false,
+            "show_payment_klarna-pay-later": false,
+            "show_payment_shopify_pay": false,
+            "show_payment_sofort": false
+          }
+        }
+      },
+      "block_order": [
+        "sections--14855161806899__7eedcb28-e49a-440c-8084-783dd80dcea3-16768803545575a6a6-0",
+        "sections--14855161806899__7eedcb28-e49a-440c-8084-783dd80dcea3-16768803545575a6a6-1",
+        "sections--14855161806899__7eedcb28-e49a-440c-8084-783dd80dcea3-16768803545575a6a6-2",
+        "sections--14855161806899__7eedcb28-e49a-440c-8084-783dd80dcea3-16768803545575a6a6-3",
+        "51e3b5cf-c78a-4510-bb21-941a595721dc"
+      ],
+      "settings": {
+        "container": "1770",
+        "padding_full_width": 0,
+        "type_footer_heading": "font_2",
+        "type_footer_heading_font_size": 16,
+        "type_footer_heading_font_weight": "600",
+        "type_footer_heading_text_transform": "uppercase",
+        "type_footer_heading_line_height": 22,
+        "type_footer_heading_letter_spacing": ".02em",
+        "type_footer_link": "font_1",
+        "type_footer_link_font_size": 12,
+        "type_footer_link_font_weight": "400",
+        "type_footer_link_text_transform": "capitalize",
+        "type_footer_link_line_height": 30,
+        "type_footer_link_letter_spacing": ".02em",
+        "enable_border_footer_top": false,
+        "border_footer_top_color": "#282828",
+        "pdtop_footer_top": 95,
+        "pdbottom_footer_top": 50,
+        "footer_top_bg": "#ffffff",
+        "footer_top_bg_gradient": "",
+        "show_footer_top_bg_img": false,
+        "footer_top_bg_position_x": "center",
+        "footer_top_bg_position_y": "center",
+        "footer_top_bg_repeat": "no-repeat",
+        "footer_top_bg_attachment": "fixed",
+        "footer_top_bg_size": "contain",
+        "footer_top_text_align": "left",
+        "footer_top_title_color": "#000000",
+        "footer_top_color_link": "#5a5a5a",
+        "footer_top_color_link_hover": "#000000"
+      }
+    }
+  },
+  "order": [
+    "6b1e0902-ba21-475f-a393-eafea2e03a77",
+    "7eedcb28-e49a-440c-8084-783dd80dcea3"
+  ]
+}

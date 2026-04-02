@@ -1,0 +1,61 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "store-locator",
+      "blocks": {
+        "59d6563c-9f03-42a6-af6c-0476e031b0f7": {
+          "type": "item",
+          "settings": {
+            "address": "9191 Bolsa Ave, Unit 119",
+            "cross_street": "",
+            "city": "Westminster",
+            "state": "CA",
+            "postal_code": "92683",
+            "country": "United States",
+            "phone_formatted": "(714) 589-8989",
+            "map_iframe": "<iframe src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d8782.192919710478!2d-77.0430116795331!3d38.90170796351731!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89b7b7c1dd4e33d1%3A0x8a2c39a9e0f39948!2s1471%20P%20St%20NW%2C%20Washington%2C%20DC%2020005%2C%20USA!5e0!3m2!1sen!2s!4v1707118588326!5m2!1sen!2s\" width=\"600\" height=\"450\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"></iframe>"
+          }
+        }
+      },
+      "block_order": [
+        "59d6563c-9f03-42a6-af6c-0476e031b0f7"
+      ],
+      "settings": {
+        "show_breadcrumb": true,
+        "breadcrumb_alignment": "center",
+        "breadcrumb_bg": "",
+        "breadcrumb_gradient": "",
+        "breadcrumb_bg_mb": "#f6f6f6",
+        "breadcrumb_gradient_mb": "",
+        "show_page_title": true,
+        "page_title_alignment": "center",
+        "container": "container",
+        "mg_top_desktop": 0,
+        "mg_top_tablet": 0,
+        "mg_top_mobile": 0,
+        "mg_bottom_desktop": 50,
+        "mg_bottom_tablet": 50,
+        "mg_bottom_mobile": 50,
+        "address_font_size": 16,
+        "address_font_weight": "600",
+        "address_text_color": "#000000",
+        "address_text_color_hover": "#000000",
+        "info_font_size": 14,
+        "info_font_weight": "400",
+        "info_text_color": "#000000"
+      }
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

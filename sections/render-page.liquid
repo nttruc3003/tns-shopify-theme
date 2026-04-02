@@ -1,0 +1,25 @@
+{% if section.settings.page != blank %}
+  <div class="render-page">
+    {{ pages[section.settings.page].content }}
+  </div>
+{% else %}
+  <p>No page selected.</p>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Render Page Content",
+  "settings": [
+    {
+      "type": "page",
+      "id": "page",
+      "label": "Select a page to render"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Render Page"
+    }
+  ]
+}
+{% endschema %}

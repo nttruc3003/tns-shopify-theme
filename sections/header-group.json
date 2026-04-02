@@ -1,0 +1,324 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "header",
+  "name": "Header Group",
+  "sections": {
+    "announcement-bar": {
+      "type": "announcement-bar",
+      "blocks": {
+        "78d12ceb-fe78-4b6a-8d69-fdccbecd10ac": {
+          "type": "announcement",
+          "settings": {
+            "text": "<p style=\"font-family: Rajdhani; font-weight: 600\">FREE DOMESTIC SHIPPING ON ALL ORDERS OVER $149</p>",
+            "btn_color": "#f84248",
+            "btn_border_color": "#ffffff",
+            "btn_bg_color": "#ffffff",
+            "btn_bg_color_gradient": ""
+          }
+        }
+      },
+      "block_order": [
+        "78d12ceb-fe78-4b6a-8d69-fdccbecd10ac"
+      ],
+      "settings": {
+        "layout": "slider",
+        "enable_close": false,
+        "color_text": "#000000",
+        "bg_color_text": "#f5f5f5",
+        "bg_color_text_gradient": "",
+        "font_size_text": 14,
+        "font_style_text": "normal",
+        "font_weight_text": "500",
+        "arrow_active": true,
+        "content_max_width": 39,
+        "padding_top": 8,
+        "padding_bottom": 9
+      }
+    },
+    "e5ecc433-4343-42ee-b02b-333326562646": {
+      "type": "header-navigation-left-aligned",
+      "blocks": {
+        "sections--14682829619277__e5ecc433-4343-42ee-b02b-333326562646-16808689324fc714f1-0": {
+          "type": "main_menu",
+          "settings": {
+            "menu": "main-menu",
+            "menu_top_spacing": 24,
+            "menu_bottom_spacing": 22,
+            "grid_gap_menu_item": 19,
+            "alignment": "left",
+            "bg_mega_menu": "#ffffff",
+            "bg_mega_menu_gradient": "",
+            "lv_1_color": "#ffffff",
+            "lv_1_color_hover": "#f4ab3c",
+            "lv_2_color": "#1e1e1e",
+            "lv_2_color_hover": "#f4ab3c",
+            "lv_3_color": "#1e1e1e",
+            "lv_3_color_hover": "#f4ab3c",
+            "sale_item_1": "",
+            "sale_item_2": "",
+            "sale_item_3": "",
+            "sale_item_color": "#ce2b1e",
+            "label_position": "main_menu",
+            "show_label_blink": true,
+            "new_label_1": "New Releases",
+            "new_label_2": "",
+            "new_label_3": "Home 21 - Yoga, Home 22 - Eyes Wears, Home 23 - Plant+ Garden, Home 24 - Bicycle, Mobile Sticky Toolbar, Home 25 - Swimwear 2, Sticky Promotion, Marquee Function, Wishlist page (Grid view)",
+            "new_label_color": "#ffffff",
+            "new_label_bg": "#4fb7d0",
+            "new_label_bg_gradient": "",
+            "sale_label_1": "Trend",
+            "sale_label_2": "Product Pages",
+            "sale_label_3": "",
+            "sale_label_color": "#ffffff",
+            "sale_label_bg": "#ed4f2d",
+            "sale_label_bg_gradient": "",
+            "hot_label_1": "Collections, Page",
+            "hot_label_2": "",
+            "hot_label_3": "Home 02 - Trendy style, Home 04 - High Fashion, Home 06 - SuperMarket, Home 09 - Pet supplies, Home 15 - Automotive 2, Different Mobile Menu, RTL Layout, Store Locator Page",
+            "hot_label_color": "#ffffff",
+            "hot_label_bg": "#f4ab3c",
+            "hot_label_bg_gradient": ""
+          }
+        },
+        "sections--14682829619277__e5ecc433-4343-42ee-b02b-333326562646-16808689324fc714f1-1": {
+          "type": "logo",
+          "settings": {
+            "logo_position": "always",
+            "logo_width": 90,
+            "logo_width_fixed": 100,
+            "logo_text": "team nail supply",
+            "logo_font_size": 20,
+            "logo_font_weight": "900",
+            "logo_text_transform": "uppercase",
+            "logo_color": "#ffffff"
+          }
+        },
+        "sections--14682829619277__e5ecc433-4343-42ee-b02b-333326562646-16808689324fc714f1-2": {
+          "type": "header_icons",
+          "settings": {
+            "show_language_currency": false,
+            "show_customer": true,
+            "show_wishlist": true,
+            "show_wishlist_number": true,
+            "show_cart": true,
+            "show_search": true,
+            "text_font_size": 14,
+            "show_language_currency_sticky": false,
+            "show_customer_sticky": true,
+            "show_wishlist_sticky": true,
+            "show_cart_sticky": true,
+            "show_search_sticky": true,
+            "header_icons_color": "#ffffff",
+            "header_icons_color_hover": "#ffffff",
+            "cart_count_bubble_color": "#ffffff",
+            "cart_count_bubble_bg": "#e13f3f",
+            "cart_count_bubble_bg_gradient": "",
+            "wishlist_color_item": "#ffffff",
+            "wishlist_bg_item": "#f4ab3c",
+            "search_border_color": "#ffffff",
+            "search_text_color": "#ffffff"
+          }
+        },
+        "7a4d965a-aa54-46ce-929b-970856d9dfeb": {
+          "type": "megamenu_style_4",
+          "settings": {
+            "layout_block": "custom_width",
+            "header_custom_width_size": 1200,
+            "item": "New Releases",
+            "column": 5,
+            "menu_text_left": "",
+            "menu_text_left_sale": "On Sale",
+            "show_banner_1": true,
+            "banner_url_1": "shopify://collections/collection-yoga-01",
+            "show_banner_2": true,
+            "banner_url_2": "shopify://collections/created-collection-yoga-02",
+            "show_az_brand": true,
+            "az_brand_title": "Brand By Alphabet",
+            "az_brand_link_text": "View All",
+            "az_brand_url": "shopify://pages/brands",
+            "bg_mega_menu_bottom": "#f8f8f8",
+            "az_brand_link_text_color": "#000000"
+          }
+        },
+        "69d1a792-d8c4-4fb3-952f-415d2b5b3880": {
+          "type": "megamenu_style_5",
+          "settings": {
+            "layout_block": "custom_width",
+            "header_custom_width_size": 1800,
+            "mega_tyle": "style4",
+            "item": "Menu 2",
+            "column": 6,
+            "menu_text_left": "",
+            "menu_text_left_sale": "On Sale",
+            "show_banner_1": true,
+            "banner_url_1": "",
+            "product_limit": 4,
+            "show_product": true,
+            "product_title": "Featured Products",
+            "product_collection": "collection-yoga-01",
+            "bg_mega_menu_bottom": "#f8f8f8"
+          }
+        },
+        "d278cc4d-56e0-4d03-a349-610dc4548912": {
+          "type": "megamenu_style_1",
+          "settings": {
+            "layout_block": "custom_width",
+            "header_custom_width_size": 1200,
+            "item": "Menu 3",
+            "column": 3,
+            "show_banner_1": true,
+            "banner_url_1": "",
+            "show_product": true,
+            "product_title": "Featured Products",
+            "product_collection": "cosmo-naminos-delementum-bra-3"
+          }
+        },
+        "17d07384-5d16-48bc-965d-3ca749ba36c2": {
+          "type": "megamenu_style_2",
+          "settings": {
+            "layout_block": "custom_width",
+            "header_custom_width_size": 1200,
+            "item": "Menu 4",
+            "column": 3,
+            "show_banner_1": true,
+            "banner_url_1": "",
+            "show_banner_2": true,
+            "banner_url_2": "",
+            "show_banner_3": true,
+            "banner_url_3": ""
+          }
+        },
+        "e2c65717-91b6-48d4-b66c-dc530297d863": {
+          "type": "megamenu_style_3",
+          "settings": {
+            "layout_block": "custom_width",
+            "header_custom_width_size": 1200,
+            "mega_tyle": "style1",
+            "item": "Menu 5",
+            "column": 5,
+            "show_banner_1": true,
+            "banner_url_1": "",
+            "show_banner_2": true,
+            "banner_url_2": "",
+            "show_banner_3": true,
+            "banner_url_3": "",
+            "show_banner_4": true,
+            "banner_url_4": "",
+            "show_banner_5": true,
+            "banner_url_5": ""
+          }
+        },
+        "ed1a2503-8d84-4fca-a8de-bd026dad9703": {
+          "type": "megamenu_style_1",
+          "settings": {
+            "layout_block": "custom_width",
+            "header_custom_width_size": 1300,
+            "item": "Demos",
+            "column": 5,
+            "show_banner_1": false,
+            "banner_url_1": "",
+            "show_product": false,
+            "product_title": "Featured Products",
+            "product_collection": ""
+          }
+        }
+      },
+      "block_order": [
+        "sections--14682829619277__e5ecc433-4343-42ee-b02b-333326562646-16808689324fc714f1-0",
+        "sections--14682829619277__e5ecc433-4343-42ee-b02b-333326562646-16808689324fc714f1-1",
+        "sections--14682829619277__e5ecc433-4343-42ee-b02b-333326562646-16808689324fc714f1-2",
+        "7a4d965a-aa54-46ce-929b-970856d9dfeb",
+        "69d1a792-d8c4-4fb3-952f-415d2b5b3880",
+        "d278cc4d-56e0-4d03-a349-610dc4548912",
+        "17d07384-5d16-48bc-965d-3ca749ba36c2",
+        "e2c65717-91b6-48d4-b66c-dc530297d863",
+        "ed1a2503-8d84-4fca-a8de-bd026dad9703"
+      ],
+      "settings": {
+        "container": "1770",
+        "padding_full_width": 0,
+        "header_navigation_bg": "#1e1e1e",
+        "header_navigation_bg_gradient": "",
+        "sticky_header_type": "on_scroll",
+        "sticky_header_width": "default"
+      }
+    },
+    "header-mobile": {
+      "type": "header-mobile",
+      "blocks": {
+        "7de2266e-0cd4-4fda-9f09-06f75a17f944": {
+          "type": "menu",
+          "settings": {
+            "color": "#232323",
+            "menu_tab_bg": "#000000"
+          }
+        },
+        "163e2cb5-14f2-4af6-9ac3-77193c082f53": {
+          "type": "search",
+          "disabled": true,
+          "settings": {
+            "color": "#232323"
+          }
+        },
+        "550fbd21-75fb-4051-9dee-77d91b5239f0": {
+          "type": "logo",
+          "settings": {
+            "logo_width_mobile": 120,
+            "logo_text": "team nail supply",
+            "logo_font_size": 15,
+            "logo_font_weight": "900",
+            "logo_text_transform": "uppercase",
+            "logo_color": "#232323"
+          }
+        },
+        "20dae707-64c0-4ea3-a05e-561cae9836d8": {
+          "type": "customer",
+          "disabled": true,
+          "settings": {
+            "icon": "2",
+            "color": "#232323"
+          }
+        },
+        "633f9dae-3f65-4bda-9ca8-9d3e231aaf9d": {
+          "type": "cart",
+          "settings": {
+            "icon": "3",
+            "color": "#232323",
+            "color_bubble": "#ffffff",
+            "bg_bubble": "#232323"
+          }
+        }
+      },
+      "block_order": [
+        "7de2266e-0cd4-4fda-9f09-06f75a17f944",
+        "163e2cb5-14f2-4af6-9ac3-77193c082f53",
+        "550fbd21-75fb-4051-9dee-77d91b5239f0",
+        "20dae707-64c0-4ea3-a05e-561cae9836d8",
+        "633f9dae-3f65-4bda-9ca8-9d3e231aaf9d"
+      ],
+      "settings": {
+        "background": "#ffffff",
+        "gradient": "",
+        "sticky_header_type": "on_scroll",
+        "enable_transparent": false,
+        "transparent_color": "#ffffff",
+        "transparent_border_color": "",
+        "padding_top": 0,
+        "padding_bottom": 0
+      }
+    }
+  },
+  "order": [
+    "announcement-bar",
+    "e5ecc433-4343-42ee-b02b-333326562646",
+    "header-mobile"
+  ]
+}
