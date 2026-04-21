@@ -3266,3 +3266,24 @@ quickshop-update-quantity.disabled {
         padding-left: calc((1920px - 1170px) / 2);
     }
 }
+
+.bxgy-promos {
+  margin-bottom: 16px;
+}
+
+.bxgy-card {
+  padding: 14px 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fafafa;
+  margin-bottom: 12px;
+}
+
+.bxgy-card__text {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.bxgy-card__button {
+  margin-top: 10px;
+}

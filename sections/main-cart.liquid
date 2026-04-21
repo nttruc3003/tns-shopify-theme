@@ -469,6 +469,11 @@
                         </div>
                         <div class="cart-content-item cart-total{% if section.settings.enable_sticky_button_checkout_mb %} enable_sticky_buttton{% endif %}" data-cart-total>
                             <form action="{{ routes.cart_url }}" method="post" novalidate>
+                               {% comment %}
+                                hoainhandev bổ sung bxgy
+                                {% endcomment %}
+                               
+                              {% render 'bxgy-promo' %}
                                 <ul class="cart-totals list-unstyled">
                                     <div class="cart--totals-title">{{ 'general.cart.order_summary' | t }}</div>
                                     <li class="cart-total cart-total-subtotal">

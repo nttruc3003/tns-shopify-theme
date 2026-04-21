@@ -46,6 +46,18 @@
         endif
     endif
 
+    assign promo_badge = false
+    assign coming_soon_badge = false
+
+    for tag in product.tags
+        assign tag_handle = tag | handle
+        if tag_handle == 'promo'
+            assign promo_badge = true
+        elsif tag_handle == 'coming-soon'
+            assign coming_soon_badge = true
+        endif
+    endfor
+
     if settings.show_new_badge
         assign new_badge = false
         assign new_badge_type = settings.new_badge_type
@@ -67,7 +79,7 @@
         endif
     endif
 -%}
-{%- if sale_badge or sold_out_badge or custom_badge or bundle_badge or new_badge -%}
+{%- if sale_badge or sold_out_badge or custom_badge or bundle_badge or new_badge or promo_badge or coming_soon_badge -%}
     <div class="{{ class }}{% if sale_badge_type == 'discount' or sale_badge_type == 'text_discount' %} has-badge-js{% endif %} badge-{{ position }} halo-productBadges halo-productBadges--{{ position }} date-{{ date_minus }} date1-{{ date_difference }}{% unless sale_badge %} sale_badge_disable{% endunless %}"
         {% if sale_badge_type == 'text_discount' or sale_badge_type == 'text' %}data-text-sale-badge="{{ 'products.product.on_sale' | t }}"{% endif %}
         {% if sale_badge_type == 'discount' %}data-text-sale-badge="- "{% endif %}
@@ -88,6 +100,19 @@
                 </span>
             {%- endif -%}
         {%- endif -%}
+
+        {%- if promo_badge -%}
+            <span class="badge promo-badge" aria-hidden="true">
+                PROMO
+            </span>
+        {%- endif -%}
+
+        {%- if coming_soon_badge -%}
+            <span class="badge coming-soon-badge" aria-hidden="true">
+                COMING SOON
+            </span>
+        {%- endif -%}
+
         {%- if sale_badge -%}
             <span class="badge sale-badge" aria-hidden="true">
                 {%- if sale_badge_type == 'discount' -%}
@@ -134,11 +159,13 @@
                 {%- endif -%}
             </span>
         {%- endif -%}
+
         {%- if sold_out_badge -%}
             <span class="badge sold-out-badge" aria-hidden="true">
                 {{ 'products.product.sold_out' | t }}
             </span>
         {%- endif -%}
+
         {%- if custom_badge -%}
             <span class="badge custom-badge" aria-hidden="true">
                 {%- if custom_badge_text -%}
@@ -148,6 +175,7 @@
                 {%- endif -%}
             </span>
         {%- endif -%}
+
         {%- if bundle_badge -%}
             <span class="badge bundle-badge" aria-hidden="true">
                 {{ 'products.product.bundle' | t }}

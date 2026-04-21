@@ -724,6 +724,18 @@
     "brand_slider_pUeALL": {
       "type": "brand-slider",
       "blocks": {
+        "image_kYiPt9": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/HNS_logo.png",
+            "title": "",
+            "color_text": "#000000",
+            "color_text_hover": "#3e8cc4",
+            "description": "",
+            "color_des": "#3c3c3c",
+            "link": ""
+          }
+        },
         "image_NtwtxY": {
           "type": "image",
           "settings": {
@@ -846,6 +858,7 @@
         }
       },
       "block_order": [
+        "image_kYiPt9",
         "image_NtwtxY",
         "image_zyLygL",
         "image_FeKBNp",
