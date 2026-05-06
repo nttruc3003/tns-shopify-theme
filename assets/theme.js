@@ -7651,6 +7651,23 @@ document.addEventListener('click', async function (e) {
     .custom-atc-toast__text {
       opacity: .96;
     }
+      @media (max-width: 767px) {
+    .custom-atc-toast-wrap {
+      top: auto;
+      bottom: 90px;
+      right: 14px;
+      left: 14px;
+    }
+
+    .custom-atc-toast {
+      min-width: 0;
+      max-width: none;
+      width: 100%;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 13px;
+    }
+  }
   `;
   document.head.appendChild(style);
 })();

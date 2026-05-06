@@ -152,7 +152,7 @@
         "product_block_layout": "slider",
         "product_bg": "#ffffff",
         "product_bg_gradient": "",
-        "product_block_collection": "rocky-dinh",
+        "product_block_collection": "rocky-dinh-old",
         "product_block_limit": 8,
         "grid_gap": 30,
         "pb_style": "style1",
@@ -611,7 +611,7 @@
         "product_block_layout": "scroll",
         "product_bg": "#ffffff",
         "product_bg_gradient": "",
-        "product_block_collection": "rocky-dinh",
+        "product_block_collection": "rocky-dinh-old",
         "product_block_limit": 8,
         "grid_gap": 30,
         "pb_style": "style1",
@@ -722,7 +722,7 @@
             "color_text_hover": "#3e8cc4",
             "description": "",
             "color_des": "#3c3c3c",
-            "link": "shopify://collections/thuận-nguyễn"
+            "link": "shopify://collections/thuan-nguyen-old"
           }
         },
         "image_VQNRYG": {
@@ -734,7 +734,7 @@
             "color_text_hover": "#3e8cc4",
             "description": "",
             "color_des": "#3c3c3c",
-            "link": "shopify://collections/rocky-dinh"
+            "link": "shopify://collections/rocky-dinh-old"
           }
         },
         "image_FeKBNp": {

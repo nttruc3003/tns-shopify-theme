@@ -15,7 +15,7 @@
         "template--14809580109875__cc93ff53-7616-492f-b4d0-67072a29ad77-166658139303cdfc59-0": {
           "type": "largeImg",
           "settings": {
-            "image": "shopify://shop_images/khangduong.png",
+            "image": "shopify://shop_images/Team_nail_Supply_temp.png",
             "enable_max_width_image": false,
             "custom_width_image": 1170,
             "enable_scroll_down": false,
@@ -472,7 +472,7 @@
         "template--14809580109875__cc93ff53-7616-492f-b4d0-67072a29ad77-166658139303cdfc59-0": {
           "type": "largeImg",
           "settings": {
-            "image": "shopify://shop_images/khangduong.png",
+            "image": "shopify://shop_images/Team_nail_Supply_temp.png",
             "enable_max_width_image": false,
             "custom_width_image": 1170,
             "enable_scroll_down": false,
@@ -711,7 +711,7 @@
     "brand_slider_pUeALL": {
       "type": "brand-slider",
       "blocks": {
-        "image_f9Bn7c": {
+        "image_EJyTcn": {
           "type": "image",
           "settings": {
             "image": "shopify://shop_images/Screenshot_2026-03-31_at_5.51.24_AM.png",
@@ -720,10 +720,10 @@
             "color_text_hover": "#3e8cc4",
             "description": "",
             "color_des": "#3c3c3c",
-            "link": "shopify://collections/thuan-nguyen-old"
+            "link": "shopify://collections/thuận-nguyễn"
           }
         },
-        "image_htrCxX": {
+        "image_rdDfWV": {
           "type": "image",
           "settings": {
             "image": "shopify://shop_images/Logo.png",
@@ -844,8 +844,8 @@
         }
       },
       "block_order": [
-        "image_f9Bn7c",
-        "image_htrCxX",
+        "image_EJyTcn",
+        "image_rdDfWV",
         "image_FeKBNp",
         "image_RMU3cF",
         "image_YqpizT",
