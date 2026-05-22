@@ -12,12 +12,20 @@
 
 {%- liquid
   assign family_collection = product.metafields.custom.color_family.value
-  assign storefront_token = shop.metafields.custom.storefront_token
+  assign storefront_token = shop.metafields.custom.storefront_token.value
+  if storefront_token == blank
+    assign storefront_token = shop.metafields.custom.storefront_token
+  endif
   assign family_total = 0
+  assign family_tags_json = '[]'
   if family_collection != blank
     assign family_total = family_collection.products_count
     if family_total == 0
       assign family_total = family_collection.all_products_count
+    endif
+    assign family_tags_meta = family_collection.metafields.custom.color_family_tags.value
+    if family_tags_meta != blank
+      assign family_tags_json = family_tags_meta | json
     endif
   endif
 -%}
@@ -118,6 +126,7 @@
       "familyName": {{ family_collection.title | json }},
       "familyUrl": {{ family_collection.url | json }},
       "familyTotal": {{ family_total | json }},
+      "familyTags": {{ family_tags_json }},
       "shopDomain": {{ shop.permanent_domain | json }},
       "storefrontToken": {{ storefront_token | json }},
       "apiVersion": "2024-10",

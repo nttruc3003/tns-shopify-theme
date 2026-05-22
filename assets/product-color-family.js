@@ -10,10 +10,23 @@
     if (!configEl) return;
     let config;
     try { config = JSON.parse(configEl.textContent); }
-    catch (e) { return; }
-    if (!config.storefrontToken || !config.collectionHandle || !config.shopDomain) return;
+    catch (e) { console.warn('[color-family] invalid config JSON', e); return; }
+    if (config.storefrontToken && typeof config.storefrontToken === 'object') {
+      config.storefrontToken = config.storefrontToken.value || '';
+    }
+    if (!config.storefrontToken || !config.collectionHandle || !config.shopDomain) {
+      console.warn('[color-family] missing required config', {
+        hasToken: !!config.storefrontToken,
+        hasHandle: !!config.collectionHandle,
+        hasDomain: !!config.shopDomain
+      });
+      return;
+    }
 
     const PAGE = config.pageSize || 20;
+    const familyTags = Array.isArray(config.familyTags) ? config.familyTags.filter(Boolean) : [];
+    const canFilter = familyTags.length > 0;
+
     const els = {
       grid: root.querySelector('[data-cf-grid]'),
       input: root.querySelector('[data-cf-input]'),
@@ -32,28 +45,34 @@
       inCartSummary: root.querySelector('[data-cf-in-cart-summary]')
     };
 
+    if (!canFilter) {
+      if (els.input) { els.input.disabled = true; els.input.placeholder = 'Search unavailable'; }
+      if (els.toolbar) els.toolbar.hidden = true;
+    }
+
     const state = {
       query: '',
       page: 0,
-      total: Number(config.familyTotal) || 0,
       items: [],
+      total: Number(config.familyTotal) || 0,
+      totalKnown: true,
       loading: true,
-      hideOOS: readPref('hideOOS') === '1',
+      hideOOS: canFilter && readPref('hideOOS') === '1',
       cart: {},
       familyHasOOS: false,
-      pageCursors: { 0: null }
+      pageCursors: { 0: null },
+      seenFamilyIds: new Set()
     };
 
     if (state.hideOOS && els.hideOOS) els.hideOOS.checked = true;
 
-    const cache = sessionStoreFor(config.collectionHandle);
-    const endpoint = `https://${config.shopDomain}/api/${config.apiVersion}/graphql.json`;
+    const endpoint = 'https://' + config.shopDomain + '/api/' + config.apiVersion + '/graphql.json';
 
-    const QUERY = `query Family($handle: String!, $first: Int!, $after: String, $q: String) {
+    const COLL_QUERY = `query Family($handle: String!, $first: Int!, $after: String) {
       collection(handle: $handle) {
-        products(first: $first, after: $after, query: $q, sortKey: TITLE) {
+        products(first: $first, after: $after, sortKey: TITLE) {
           pageInfo { hasNextPage endCursor }
-          edges { cursor node {
+          edges { node {
             id handle title availableForSale totalInventory
             featuredImage { url altText }
             variants(first: 1) { edges { node { id quantityAvailable } } }
@@ -62,37 +81,49 @@
       }
     }`;
 
-    function buildQueryString(q, hideOOS) {
-      const parts = [];
-      if (q && q.trim()) {
-        const safe = q.trim().replace(/[*"\\]/g, '');
-        parts.push(`title:*${safe}*`);
+    const SEARCH_QUERY = `query FamilySearch($q: String!, $first: Int!, $after: String) {
+      products(first: $first, after: $after, query: $q, sortKey: TITLE) {
+        pageInfo { hasNextPage endCursor }
+        edges { node {
+          id handle title availableForSale totalInventory
+          featuredImage { url altText }
+          variants(first: 1) { edges { node { id quantityAvailable } } }
+        }}
       }
-      if (hideOOS) parts.push('available_for_sale:true');
-      return parts.join(' AND ') || null;
+    }`;
+
+    const cache = sessionStoreFor(config.collectionHandle);
+
+    function isFilterMode() { return canFilter && (state.query !== '' || state.hideOOS); }
+
+    function buildSearchQuery() {
+      const parts = familyTags.map(t => 'tag:' + t.replace(/["\\]/g, ''));
+      if (state.query) parts.push('title:*' + state.query.trim().replace(/[*"\\]/g, '') + '*');
+      if (state.hideOOS) parts.push('available_for_sale:true');
+      return parts.join(' AND ');
     }
 
-    async function fetchPage(page, query, hideOOS) {
-      const cacheKey = `${page}::${query}::${hideOOS ? 1 : 0}`;
+    async function fetchPage(pageIndex) {
+      const filterMode = isFilterMode();
+      const cacheKey = filterMode
+        ? 'search:' + state.query + ':' + (state.hideOOS ? 1 : 0) + ':' + pageIndex
+        : 'browse:' + pageIndex;
       const cached = cache.get(cacheKey);
       if (cached) return cached;
 
-      let after = state.pageCursors[page];
-      if (after === undefined && page > 0) {
-        for (let p = 0; p < page; p++) {
+      let after = state.pageCursors[pageIndex];
+      if (after === undefined && pageIndex > 0) {
+        for (let p = 0; p < pageIndex; p++) {
           if (state.pageCursors[p + 1] !== undefined) continue;
-          const prev = await fetchPage(p, query, hideOOS);
+          const prev = await fetchPage(p);
           state.pageCursors[p + 1] = prev.endCursor;
         }
-        after = state.pageCursors[page];
+        after = state.pageCursors[pageIndex];
       }
 
-      const variables = {
-        handle: config.collectionHandle,
-        first: PAGE,
-        after: after || null,
-        q: buildQueryString(query, hideOOS)
-      };
+      const variables = filterMode
+        ? { q: buildSearchQuery(), first: PAGE, after: after || null }
+        : { handle: config.collectionHandle, first: PAGE, after: after || null };
 
       const r = await fetch(endpoint, {
         method: 'POST',
@@ -100,36 +131,36 @@
           'Content-Type': 'application/json',
           'X-Shopify-Storefront-Access-Token': config.storefrontToken
         },
-        body: JSON.stringify({ query: QUERY, variables })
+        body: JSON.stringify({ query: filterMode ? SEARCH_QUERY : COLL_QUERY, variables })
       });
       if (!r.ok) throw new Error('HTTP ' + r.status);
       const json = await r.json();
       if (json.errors && json.errors.length) throw new Error(json.errors[0].message);
-      const coll = json.data && json.data.collection;
-      if (!coll) throw new Error('Collection not found');
+
+      const node = filterMode ? (json.data && json.data.products) : (json.data && json.data.collection && json.data.collection.products);
+      if (!node) throw new Error('No data returned');
 
       const result = {
-        items: coll.products.edges.map(e => normalize(e.node)),
-        endCursor: coll.products.pageInfo.endCursor,
-        hasNext: coll.products.pageInfo.hasNextPage
+        items: node.edges.map(e => normalize(e.node)),
+        endCursor: node.pageInfo.endCursor,
+        hasNext: node.pageInfo.hasNextPage
       };
       cache.set(cacheKey, result);
-      state.pageCursors[page + 1] = result.endCursor;
+      state.pageCursors[pageIndex + 1] = result.endCursor;
+      result.items.forEach(it => state.seenFamilyIds.add(String(it.id)));
       return result;
     }
 
     function normalize(node) {
       const gidNum = id => String(id).split('/').pop();
       const variant = node.variants.edges[0] && node.variants.edges[0].node;
-      const productId = gidNum(node.id);
       const numMatch = node.title.match(/#\s*([A-Za-z0-9]+)/);
-      const number = numMatch ? numMatch[1] : '';
       return {
-        id: productId,
+        id: gidNum(node.id),
         variantId: variant ? gidNum(variant.id) : null,
         handle: node.handle,
         title: node.title,
-        number,
+        number: numMatch ? numMatch[1] : '',
         image: node.featuredImage && node.featuredImage.url,
         alt: node.featuredImage && node.featuredImage.altText,
         inStock: !!node.availableForSale,
@@ -148,17 +179,18 @@
           map[pid] = (map[pid] || 0) + it.quantity;
         });
         state.cart = map;
-        if (!state.loading) repaintCartBadges();
-        renderActiveCart();
-        renderHeaderInCart();
+        if (!state.loading) {
+          renderGrid();
+          renderActiveCart();
+          renderHeaderInCart();
+        }
       } catch (e) { /* ignore */ }
     }
 
     const debouncedCartRefresh = debounce(refreshCart, 250);
     ['focus', 'pageshow'].forEach(ev => window.addEventListener(ev, debouncedCartRefresh));
-
     const origFetch = window.fetch;
-    window.fetch = function (input, init) {
+    window.fetch = function (input) {
       const p = origFetch.apply(this, arguments);
       const url = typeof input === 'string' ? input : (input && input.url) || '';
       if (/\/cart\/(add|change|update|clear)/.test(url)) {
@@ -173,6 +205,7 @@
       renderFooter();
       renderActiveCart();
       renderHeaderInCart();
+      renderHeaderTotal();
     }
 
     function renderGrid() {
@@ -230,11 +263,6 @@
         qty + '</span>';
     }
 
-    function repaintCartBadges() {
-      if (!state.items.length) return;
-      els.grid.innerHTML = state.items.map(renderItem).join('');
-    }
-
     function renderActiveCart() {
       if (!els.activeCart) return;
       const qty = state.cart[String(config.currentProductId)] || 0;
@@ -248,12 +276,9 @@
 
     function renderHeaderInCart() {
       if (!els.inCartSummary) return;
-      const seen = new Set();
-      cache.forEachItem(item => seen.add(String(item.id)));
-      state.items.forEach(item => seen.add(String(item.id)));
       let n = 0;
       Object.keys(state.cart).forEach(id => {
-        if (seen.has(id) && state.cart[id] > 0) n++;
+        if (state.seenFamilyIds.has(id) && state.cart[id] > 0) n++;
       });
       if (n > 0) {
         els.inCartSummary.hidden = false;
@@ -262,6 +287,11 @@
         els.inCartSummary.hidden = true;
         els.inCartSummary.textContent = '';
       }
+    }
+
+    function renderHeaderTotal() {
+      if (!els.total) return;
+      els.total.textContent = state.total.toLocaleString() + (state.totalKnown ? '' : '+');
     }
 
     function renderCount() {
@@ -273,7 +303,8 @@
       }
       els.count.style.color = '';
       const total = state.total;
-      els.count.textContent = total.toLocaleString() + ' ' + (total === 1 ? 'match' : 'matches');
+      const suffix = state.totalKnown ? '' : '+';
+      els.count.textContent = total.toLocaleString() + suffix + ' ' + (total === 1 ? 'match' : 'matches');
     }
 
     function renderFooter() {
@@ -284,9 +315,9 @@
       }
       els.footer.hidden = false;
       const start = state.page * PAGE + 1;
-      const end = Math.min(state.total, (state.page + 1) * PAGE);
+      const end = Math.min(state.total, state.page * PAGE + state.items.length);
       if (els.range) els.range.textContent = start + '–' + end;
-      if (els.totalFoot) els.totalFoot.textContent = state.total.toLocaleString();
+      if (els.totalFoot) els.totalFoot.textContent = state.total.toLocaleString() + (state.totalKnown ? '' : '+');
 
       const totalPages = Math.max(1, Math.ceil(state.total / PAGE));
       const buttons = pageButtons(state.page, totalPages);
@@ -316,19 +347,21 @@
       return out;
     }
 
+    function resetCursors() { state.pageCursors = { 0: null }; }
+
     let searchTimer = null;
     if (els.input) {
       els.input.addEventListener('input', () => {
         if (els.clear) els.clear.hidden = !els.input.value;
-        state.loading = true;
-        renderCount();
         clearTimeout(searchTimer);
         searchTimer = setTimeout(() => {
           const q = els.input.value.trim();
-          if (q === state.query) { state.loading = false; renderCount(); return; }
+          if (q === state.query) return;
           state.query = q;
           state.page = 0;
-          state.pageCursors = { 0: null };
+          resetCursors();
+          state.loading = true;
+          renderCount();
           load();
         }, 300);
       });
@@ -338,39 +371,36 @@
           if (els.clear) els.clear.hidden = true;
           state.query = '';
           state.page = 0;
-          state.pageCursors = { 0: null };
+          resetCursors();
           state.loading = true;
           renderCount();
           load();
         }
       });
     }
-
     if (els.clear) {
       els.clear.addEventListener('click', () => {
         els.input.value = '';
         els.clear.hidden = true;
         state.query = '';
         state.page = 0;
-        state.pageCursors = { 0: null };
+        resetCursors();
         state.loading = true;
         renderCount();
         load();
       });
     }
-
     if (els.hideOOS) {
       els.hideOOS.addEventListener('change', () => {
         state.hideOOS = els.hideOOS.checked;
         writePref('hideOOS', state.hideOOS ? '1' : '0');
         state.page = 0;
-        state.pageCursors = { 0: null };
+        resetCursors();
         state.loading = true;
         renderCount();
         load();
       });
     }
-
     if (els.pagination) {
       els.pagination.addEventListener('click', e => {
         const btn = e.target.closest('button');
@@ -390,26 +420,32 @@
 
     async function load() {
       try {
-        const result = await fetchPage(state.page, state.query, state.hideOOS);
+        const result = await fetchPage(state.page);
         state.items = result.items;
 
-        if (state.page === 0 && !state.query && !state.hideOOS) {
-          state.total = Number(config.familyTotal) || state.items.length;
+        if (!isFilterMode()) {
+          state.total = Number(config.familyTotal) || (state.page * PAGE + state.items.length);
+          state.totalKnown = true;
         } else {
           const minTotal = state.page * PAGE + state.items.length;
-          state.total = result.hasNext ? Math.max(minTotal + 1, state.total) : minTotal;
+          if (result.hasNext) {
+            state.total = Math.max(state.total, minTotal);
+            state.totalKnown = false;
+          } else {
+            state.total = minTotal;
+            state.totalKnown = true;
+          }
         }
 
-        if (state.page === 0 && !state.query && !state.hideOOS) {
+        if (state.page === 0 && !isFilterMode()) {
           state.familyHasOOS = state.items.some(it => !it.inStock);
           if (els.toolbar) els.toolbar.hidden = !state.familyHasOOS;
         }
 
-        if (els.total) els.total.textContent = state.total.toLocaleString();
-
         state.loading = false;
         render();
       } catch (err) {
+        console.error('[color-family] fetch failed', err);
         state.loading = false;
         els.grid.innerHTML =
           '<li class="color-family-switcher__empty">' +
@@ -455,16 +491,6 @@
         },
         set(key, value) {
           try { sessionStorage.setItem(prefix + key, JSON.stringify(value)); } catch (e) { /* quota */ }
-        },
-        forEachItem(cb) {
-          try {
-            for (let i = 0; i < sessionStorage.length; i++) {
-              const k = sessionStorage.key(i);
-              if (!k || k.indexOf(prefix) !== 0) continue;
-              const v = JSON.parse(sessionStorage.getItem(k));
-              if (v && v.items) v.items.forEach(cb);
-            }
-          } catch (e) { /* ignore */ }
         }
       };
     }
