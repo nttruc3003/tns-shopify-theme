@@ -1,0 +1,138 @@
+{%- comment -%}
+  Color Family Combobox.
+  Searchable popover/dropdown for picking a sibling shade from the same color family.
+  Same data source as `color-family-switcher`, different UI shape (combobox instead of grid).
+
+  Requires:
+    - product.metafields.custom.color_family — Collection reference
+    - shop.metafields.custom.storefront_token — Storefront API public access token
+
+  Renders nothing if either is missing.
+{%- endcomment -%}
+
+{%- liquid
+  assign family_collection = product.metafields.custom.color_family.value
+  assign storefront_token = shop.metafields.custom.storefront_token.value
+  if storefront_token == blank
+    assign storefront_token = shop.metafields.custom.storefront_token
+  endif
+  assign family_total = 0
+  assign family_tags_json = '[]'
+  if family_collection != blank
+    assign family_total = family_collection.products_count
+    if family_total == 0
+      assign family_total = family_collection.all_products_count
+    endif
+    assign family_tags_meta = family_collection.metafields.custom.color_family_tags.value
+    if family_tags_meta != blank
+      assign family_tags_json = family_tags_meta | json
+    endif
+  endif
+-%}
+
+{%- if family_collection != blank and storefront_token != blank -%}
+  {{ 'color-family-combobox.css' | asset_url | stylesheet_tag }}
+
+  <div class="cfc"
+       data-cfc-block
+       data-cfc-current-id="{{ product.id }}"
+       data-cfc-current-handle="{{ product.handle }}">
+
+    <button type="button" class="cfc__trigger" data-cfc-trigger aria-haspopup="listbox" aria-expanded="false">
+      <span class="cfc__swatch" aria-hidden="true">
+        {%- if product.featured_image -%}
+          <img src="{{ product.featured_image | image_url: width: 88 }}" alt="" loading="lazy" width="34" height="34">
+        {%- endif -%}
+      </span>
+      <span class="cfc__trigger-body" data-cfc-trigger-body>
+        <span class="cfc__trigger-title" data-cfc-trigger-title>{{ product.title }}</span>
+        <span class="cfc__trigger-helper">
+          Type a # or shade name to search across <span data-cfc-trigger-total>{{ family_total }}</span> shades
+        </span>
+      </span>
+      <span class="cfc__trigger-input-wrap" data-cfc-input-wrap hidden>
+        <input type="search"
+               class="cfc__input"
+               data-cfc-input
+               autocomplete="off"
+               role="combobox"
+               aria-autocomplete="list"
+               aria-controls="cfc-listbox-{{ product.id }}"
+               placeholder='Search #{{ product.title | escape }}'>
+      </span>
+      <span class="cfc__trigger-actions">
+        <button type="button" class="cfc__clear" data-cfc-clear hidden aria-label="Clear search">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+        <span class="cfc__chev" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m6 9 6 6 6-6"/>
+          </svg>
+        </span>
+      </span>
+    </button>
+
+    <div class="cfc__panel" data-cfc-panel hidden>
+      <div class="cfc__sheet-header" data-cfc-sheet-header>
+        <span class="cfc__sheet-handle" aria-hidden="true"></span>
+        <div class="cfc__sheet-title">
+          <span class="cfc__sheet-eyebrow">Choose a shade</span>
+          <span class="cfc__sheet-family">
+            {{ family_collection.title }} ·
+            <span data-cfc-sheet-total>{{ family_total }}</span> shades
+          </span>
+        </div>
+        <button type="button" class="cfc__sheet-close" data-cfc-close aria-label="Close">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="cfc__strip" data-cfc-strip>
+        <span class="cfc__strip-count" data-cfc-count>
+          Browsing all <strong data-cfc-count-num>{{ family_total }}</strong> shades
+        </span>
+        <label class="cfc__hide-oos" data-cfc-hide-oos-wrap hidden>
+          <input type="checkbox" data-cfc-hide-oos>
+          Hide sold out (<span data-cfc-oos-count>0</span>)
+        </label>
+      </div>
+
+      <ul class="cfc__listbox" id="cfc-listbox-{{ product.id }}" role="listbox" data-cfc-listbox aria-busy="true">
+        {%- for i in (1..6) -%}
+          <li class="cfc__row cfc__row--skeleton" aria-hidden="true"></li>
+        {%- endfor -%}
+      </ul>
+
+      <div class="cfc__footer" data-cfc-footer hidden>
+        <span data-cfc-footer-text></span>
+      </div>
+    </div>
+
+    <noscript>
+      <p class="cfc__noscript">
+        <a href="{{ family_collection.url }}">Browse all {{ family_total }} shades in {{ family_collection.title }} →</a>
+      </p>
+    </noscript>
+
+    <script type="application/json" data-cfc-config>
+      {
+        "collectionHandle": {{ family_collection.handle | json }},
+        "currentProductId": {{ product.id | json }},
+        "currentHandle": {{ product.handle | json }},
+        "familyName": {{ family_collection.title | json }},
+        "familyUrl": {{ family_collection.url | json }},
+        "familyTotal": {{ family_total | json }},
+        "familyTags": {{ family_tags_json }},
+        "shopDomain": {{ shop.permanent_domain | json }},
+        "storefrontToken": {{ storefront_token | json }},
+        "apiVersion": "2024-10"
+      }
+    </script>
+
+    <script src="{{ 'color-family-combobox.js' | asset_url }}" defer></script>
+  </div>
+{%- endif -%}
