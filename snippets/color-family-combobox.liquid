@@ -37,6 +37,7 @@
   assign s_trigger_title_color = block.settings.trigger_title_color | default: '#232017'
   assign s_trigger_helper_size = block.settings.trigger_helper_size | default: 11
   assign s_trigger_helper_color = block.settings.trigger_helper_color | default: '#8a8275'
+  assign s_chev_size = block.settings.chev_size | default: 20
 
   assign s_swatch_shape = block.settings.swatch_shape | default: 'circle'
   assign s_swatch_radius = '50%'
@@ -72,6 +73,7 @@
       --tns-cfc-trigger-title-color: {{ s_trigger_title_color }};
       --tns-cfc-trigger-helper-size: {{ s_trigger_helper_size }}px;
       --tns-cfc-trigger-helper-color: {{ s_trigger_helper_color }};
+      --tns-cfc-chev-size: {{ s_chev_size }}px;
       --tns-cfc-swatch-radius: {{ s_swatch_radius }};
       --tns-cfc-swatch-size: {{ s_swatch_size }}px;
       --tns-cfc-panel-bg: {{ s_panel_bg }};
@@ -121,8 +123,8 @@
             <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
           </svg>
         </button>
-        <span class="cfc__chev" aria-hidden="true">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <span class="cfc__chev" data-cfc-chev aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <path d="m6 9 6 6 6-6"/>
           </svg>
         </span>

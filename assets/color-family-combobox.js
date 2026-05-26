@@ -94,8 +94,8 @@
       els.panel.style.display = 'block';
     }
 
-    function onScroll() { close(); }
     function onResize() { positionPanel(); }
+    function onScroll() { if (!isMobile()) positionPanel(); }
 
     function isMobile() { return window.innerWidth <= 768; }
 
@@ -110,6 +110,9 @@
       if (!isMobile()) {
         els.triggerBody.hidden = true;
         els.inputWrap.hidden = false;
+      } else {
+        document.documentElement.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden';
       }
       requestAnimationFrame(positionPanel);
       setTimeout(() => {
@@ -119,8 +122,8 @@
       if (!state.loaded && !state.loading) loadAll();
       document.addEventListener('mousedown', onOutside);
       document.addEventListener('keydown', onEsc);
-      window.addEventListener('scroll', onScroll, { passive: true });
       window.addEventListener('resize', onResize);
+      window.addEventListener('scroll', onScroll, { passive: true, capture: true });
     }
 
     function close() {
@@ -142,23 +145,30 @@
       els.panel.style.display = '';
       els.panel.classList.remove('is-active');
       if (panelOriginalParent) panelOriginalParent.appendChild(els.panel);
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
       document.removeEventListener('mousedown', onOutside);
       document.removeEventListener('keydown', onEsc);
-      window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onResize);
+      window.removeEventListener('scroll', onScroll, { capture: true });
     }
 
     function onOutside(e) {
+      if (isMobile()) return;
       if (root.contains(e.target) || els.panel.contains(e.target)) return;
       close();
     }
     function onEsc(e) {
-      if (e.key === 'Escape') close();
+      if (e.key === 'Escape' && !isMobile()) close();
     }
 
     els.trigger.addEventListener('click', (e) => {
       if (e.target.closest('[data-cfc-clear]')) return;
-      open();
+      if (e.target.closest('[data-cfc-chev]')) {
+        if (state.open) { close(); } else { open(); }
+        return;
+      }
+      if (!state.open) open();
     });
     els.trigger.addEventListener('keydown', (e) => {
       if (state.open) return;
