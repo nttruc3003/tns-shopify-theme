@@ -117,6 +117,13 @@
       if (e.target.closest('[data-cfc-clear]')) return;
       open();
     });
+    els.trigger.addEventListener('keydown', (e) => {
+      if (state.open) return;
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        open();
+      }
+    });
 
     if (els.sheetClose) els.sheetClose.addEventListener('click', close);
 
