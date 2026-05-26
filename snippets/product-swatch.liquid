@@ -1,7 +1,7 @@
 {%- liquid
     assign variant_selected = variant_selected | handleize
     assign variantCount = product.variants | size
-    assign swatch_type = settings.swatch_type
+    assign swatch_type = 'variant_image'
     assign colorList = ''
     assign color = ''
     assign count = 0

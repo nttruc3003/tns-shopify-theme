@@ -15,7 +15,8 @@
         "template--14809580109875__cc93ff53-7616-492f-b4d0-67072a29ad77-166658139303cdfc59-0": {
           "type": "largeImg",
           "settings": {
-            "image": "shopify://shop_images/cherrybynails.jpg",
+            "image": "shopify://shop_images/Banner_Henry.jpg",
+            "mobile_image": "shopify://shop_images/Banner_Henry.jpg",
             "enable_max_width_image": false,
             "custom_width_image": 1170,
             "enable_scroll_down": false,
@@ -466,10 +467,10 @@
         "mg_bottom_mobile": 50
       }
     },
-    "slide_show_pVVeH9": {
+    "slide_show_96Pbja": {
       "type": "slide-show",
       "blocks": {
-        "video_MxaChi": {
+        "video_tyxRGt": {
           "type": "video",
           "settings": {
             "style_video": "youtube",
@@ -524,7 +525,7 @@
         }
       },
       "block_order": [
-        "video_MxaChi"
+        "video_tyxRGt"
       ],
       "name": "t:sections.slide-show.presets.name",
       "settings": {
@@ -707,7 +708,7 @@
     "brand_slider_pUeALL": {
       "type": "brand-slider",
       "blocks": {
-        "image_WfByAN": {
+        "image_EJyTcn": {
           "type": "image",
           "settings": {
             "image": "shopify://shop_images/Screenshot_2026-03-31_at_5.51.24_AM.png",
@@ -716,10 +717,10 @@
             "color_text_hover": "#3e8cc4",
             "description": "",
             "color_des": "#3c3c3c",
-            "link": "shopify://collections/thuan-nguyen-old"
+            "link": "shopify://collections/thuận-nguyễn"
           }
         },
-        "image_UWGKdm": {
+        "image_rdDfWV": {
           "type": "image",
           "settings": {
             "image": "shopify://shop_images/Logo.png",
@@ -840,8 +841,8 @@
         }
       },
       "block_order": [
-        "image_WfByAN",
-        "image_UWGKdm",
+        "image_EJyTcn",
+        "image_rdDfWV",
         "image_FeKBNp",
         "image_RMU3cF",
         "image_YqpizT",
@@ -1146,10 +1147,10 @@
         "mg_bottom_mobile": 20
       }
     },
-    "custom_service_block_cKBtHD": {
+    "custom_service_block_q8beCp": {
       "type": "custom-service-block",
       "blocks": {
-        "text_aCMH7m": {
+        "text_KtDmWW": {
           "type": "Text",
           "settings": {
             "bg_color_block": "#f8f8f8",
@@ -1160,7 +1161,7 @@
             "height_icon": 64,
             "mg_bottom_icon": 45,
             "color_icon": "#3c3c3c",
-            "text": "Store Owner - Cherry Hanh Nguyen",
+            "text": "Store Owner - Henry",
             "type_tab_font": "font_1",
             "fontsize_title_block": 18,
             "fontsize_title_block_mb": 18,
@@ -1174,7 +1175,7 @@
             "lineheight_des_block": 22,
             "mg_bottom_des": 0,
             "color_des_block": "#3c3c3c",
-            "button": "(714) 837-9824",
+            "button": "(469) 989-0324",
             "link": "",
             "button_style": "style2",
             "fontsize_button": 20,
@@ -1191,7 +1192,7 @@
             "button_background_gradient_hover": ""
           }
         },
-        "text_knWGVB": {
+        "text_mw6WrR": {
           "type": "Text",
           "settings": {
             "bg_color_block": "#f8f8f8",
@@ -1233,7 +1234,7 @@
             "button_background_gradient_hover": ""
           }
         },
-        "text_zMDBQ3": {
+        "text_pkjakH": {
           "type": "Text",
           "settings": {
             "bg_color_block": "#f8f8f8",
@@ -1277,9 +1278,9 @@
         }
       },
       "block_order": [
-        "text_aCMH7m",
-        "text_knWGVB",
-        "text_zMDBQ3"
+        "text_KtDmWW",
+        "text_mw6WrR",
+        "text_pkjakH"
       ],
       "name": "t:sections.custom_service_block.name",
       "settings": {
@@ -1366,12 +1367,12 @@
     "cc93ff53-7616-492f-b4d0-67072a29ad77",
     "564ef23b-17d6-4117-ac66-d1d4082a923e",
     "custom_service_block_wziraH",
-    "slide_show_pVVeH9",
+    "slide_show_96Pbja",
     "0b904cce-a718-4320-b7bc-2097123749ab",
     "brand_slider_pUeALL",
     "ae47af61-27f4-4065-8d5e-c9a7a071878c",
     "c837bb4b-73eb-4503-8784-91bd358e1bc3",
     "5f81b7f6-e831-462b-bd11-190fe8c6bf8f",
-    "custom_service_block_cKBtHD"
+    "custom_service_block_q8beCp"
   ]
 }

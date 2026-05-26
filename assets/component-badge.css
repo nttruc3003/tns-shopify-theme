@@ -78,3 +78,27 @@
         right: 10px;
     }
 }
+
+.halo-productBadges .badge.new-badge{
+  background: #111111;
+  color: #ffffff;
+  border-color: #111111;
+}
+
+.halo-productBadges .badge.promo-badge{
+  background: #7c3aed;
+  color: #ffffff;
+  border-color: #7c3aed;
+}
+
+.halo-productBadges .badge.coming-soon-badge{
+  background: #f59e0b;
+  color: #ffffff;
+  border-color: #f59e0b;
+}
+
+.halo-productBadges .badge.sale-badge{
+  background: #ef4444;
+  color: #ffffff;
+  border-color: #ef4444;
+}

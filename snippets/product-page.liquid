@@ -1336,6 +1336,13 @@
                                                 %}
                                             </div>
                                         {%- endif -%}
+                                    {%- when 'color_family' -%}
+                                        <div class="productView-moreItem{% if settings.banner_animation == 'effect_fade_up' %} scroll-trigger animate--slide-in{% endif %}"
+                                            style="--spacing-top: {{ spacing_top | append: 'px' }};
+                                            --spacing-bottom: {{ spacing_bottom | append: 'px' }}"
+                                        >
+                                            {% render 'product-color-family', product: product %}
+                                        </div>
                                     {%- when 'trust_image' -%}
                                         {%- liquid
                                             assign show_trust_image = block.settings.show_trust_image

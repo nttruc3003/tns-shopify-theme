@@ -15,7 +15,7 @@
         "template--14809580109875__cc93ff53-7616-492f-b4d0-67072a29ad77-166658139303cdfc59-0": {
           "type": "largeImg",
           "settings": {
-            "image": "shopify://shop_images/cherrybynails.jpg",
+            "image": "shopify://shop_images/Team_nail_Supply_temp_1.png",
             "enable_max_width_image": false,
             "custom_width_image": 1170,
             "enable_scroll_down": false,
@@ -137,7 +137,7 @@
         "mg_bottom_mobile": 0
       }
     },
-    "564ef23b-17d6-4117-ac66-d1d4082a923e": {
+    "product_block_mPrf8f": {
       "type": "product-block",
       "settings": {
         "container": "container",
@@ -153,7 +153,7 @@
         "product_bg": "#ffffff",
         "product_bg_gradient": "",
         "product_block_collection": "homepage-banner",
-        "product_block_limit": 8,
+        "product_block_limit": 4,
         "grid_gap": 30,
         "pb_style": "style1",
         "style_block_header": "style1",
@@ -466,10 +466,10 @@
         "mg_bottom_mobile": 50
       }
     },
-    "slide_show_pVVeH9": {
+    "slide_show_rEpRV4": {
       "type": "slide-show",
       "blocks": {
-        "video_MxaChi": {
+        "video_QeqEVB": {
           "type": "video",
           "settings": {
             "style_video": "youtube",
@@ -524,7 +524,7 @@
         }
       },
       "block_order": [
-        "video_MxaChi"
+        "video_QeqEVB"
       ],
       "name": "t:sections.slide-show.presets.name",
       "settings": {
@@ -590,7 +590,7 @@
         "mg_bottom_mobile": 50
       }
     },
-    "0b904cce-a718-4320-b7bc-2097123749ab": {
+    "product_block_ngQrte": {
       "type": "product-block",
       "settings": {
         "container": "container",
@@ -602,11 +602,11 @@
         "color_border_bottom": "#e8e8e8",
         "enable_minus_mg_top": true,
         "minus_spacing_top": 0,
-        "product_block_layout": "scroll",
+        "product_block_layout": "slider",
         "product_bg": "#ffffff",
         "product_bg_gradient": "",
         "product_block_collection": "homepage-banner",
-        "product_block_limit": 8,
+        "product_block_limit": 4,
         "grid_gap": 30,
         "pb_style": "style1",
         "style_block_header": "style1",
@@ -654,7 +654,7 @@
         "font_size_countdown_text": 14,
         "color_countdown": "#f42b23",
         "countdown_margin_left": 15,
-        "product_block_per_row": "5",
+        "product_block_per_row": "4",
         "product_block_infinite_scroll": true,
         "product_block_swipe_on_mobile": true,
         "enable_product_card_pd_bottom": false,
@@ -673,7 +673,7 @@
         "product_block_show": "4",
         "button_text_slider": "",
         "button_link_slider": "",
-        "product_block_per_view": "5",
+        "product_block_per_view": "4",
         "show_half": true,
         "scroll_height": 4,
         "scroll_track_bg": "#f1f1f1",
@@ -707,7 +707,7 @@
     "brand_slider_pUeALL": {
       "type": "brand-slider",
       "blocks": {
-        "image_WfByAN": {
+        "image_L9Fkfb": {
           "type": "image",
           "settings": {
             "image": "shopify://shop_images/Screenshot_2026-03-31_at_5.51.24_AM.png",
@@ -719,7 +719,7 @@
             "link": "shopify://collections/thuan-nguyen-old"
           }
         },
-        "image_UWGKdm": {
+        "image_VQNRYG": {
           "type": "image",
           "settings": {
             "image": "shopify://shop_images/Logo.png",
@@ -840,8 +840,8 @@
         }
       },
       "block_order": [
-        "image_WfByAN",
-        "image_UWGKdm",
+        "image_L9Fkfb",
+        "image_VQNRYG",
         "image_FeKBNp",
         "image_RMU3cF",
         "image_YqpizT",
@@ -1146,10 +1146,10 @@
         "mg_bottom_mobile": 20
       }
     },
-    "custom_service_block_cKBtHD": {
+    "custom_service_block_49dRN7": {
       "type": "custom-service-block",
       "blocks": {
-        "text_aCMH7m": {
+        "text_KLAXFH": {
           "type": "Text",
           "settings": {
             "bg_color_block": "#f8f8f8",
@@ -1160,7 +1160,7 @@
             "height_icon": 64,
             "mg_bottom_icon": 45,
             "color_icon": "#3c3c3c",
-            "text": "Store Owner - Cherry Hanh Nguyen",
+            "text": "Store Owner - Loi Nguyen",
             "type_tab_font": "font_1",
             "fontsize_title_block": 18,
             "fontsize_title_block_mb": 18,
@@ -1174,14 +1174,14 @@
             "lineheight_des_block": 22,
             "mg_bottom_des": 0,
             "color_des_block": "#3c3c3c",
-            "button": "(714) 837-9824",
+            "button": "(714) 589-8989",
             "link": "",
             "button_style": "style2",
             "fontsize_button": 20,
             "button_width": 235,
             "fontweight_button": "700",
             "enable_underline_button": false,
-            "color_button": "#000000",
+            "color_button": "#232323",
             "button_border": "",
             "button_background": "",
             "button_background_gradient": "",
@@ -1191,7 +1191,7 @@
             "button_background_gradient_hover": ""
           }
         },
-        "text_knWGVB": {
+        "text_q3CWk3": {
           "type": "Text",
           "settings": {
             "bg_color_block": "#f8f8f8",
@@ -1223,7 +1223,7 @@
             "button_width": 235,
             "fontweight_button": "700",
             "enable_underline_button": false,
-            "color_button": "#000000",
+            "color_button": "#232323",
             "button_border": "",
             "button_background": "",
             "button_background_gradient": "",
@@ -1233,7 +1233,7 @@
             "button_background_gradient_hover": ""
           }
         },
-        "text_zMDBQ3": {
+        "text_3TC96R": {
           "type": "Text",
           "settings": {
             "bg_color_block": "#f8f8f8",
@@ -1265,7 +1265,7 @@
             "button_width": 235,
             "fontweight_button": "700",
             "enable_underline_button": false,
-            "color_button": "#000000",
+            "color_button": "#232323",
             "button_border": "",
             "button_background": "",
             "button_background_gradient": "",
@@ -1277,9 +1277,9 @@
         }
       },
       "block_order": [
-        "text_aCMH7m",
-        "text_knWGVB",
-        "text_zMDBQ3"
+        "text_KLAXFH",
+        "text_q3CWk3",
+        "text_3TC96R"
       ],
       "name": "t:sections.custom_service_block.name",
       "settings": {
@@ -1292,7 +1292,7 @@
         "service_block_swipe_on_mobile": "slider",
         "color_icon_slider": "#212121",
         "service_block_style": "style_1",
-        "policies_bg": "#fff",
+        "policies_bg": "#ffffff",
         "policies_bg_gradient": "",
         "service_block_title": "customer support",
         "enable_border_title": false,
@@ -1330,26 +1330,26 @@
         "grid_gap": 30,
         "item_align": "center",
         "enable_block_bottom": false,
-        "bg_block_bottom": "#000",
+        "bg_block_bottom": "#000000",
         "btn_text_block_bottom": "Shop Now",
         "button_link_block_bottom": "",
         "button_1_width_block_bottom": 235,
-        "button_color_block_bottom": "#fff",
+        "button_color_block_bottom": "#ffffff",
         "button_border_block_bottom": "#232323",
         "button_background_block_bottom": "#232323",
         "button_background_gradient_block_bottom": "",
-        "button_color_hover_block_bottom": "#fff",
+        "button_color_hover_block_bottom": "#ffffff",
         "button_border_hover_block_bottom": "#232323",
         "button_background_hover_block_bottom": "#232323",
         "button_background_gradient_hover_block_bottom": "",
         "btn_2_text_block_bottom": "Shop Now",
         "button_link_2_block_bottom": "",
         "button_2_width_block_bottom": 235,
-        "button_2_color_block_bottom": "#fff",
+        "button_2_color_block_bottom": "#ffffff",
         "button_2_border_block_bottom": "#232323",
         "button_2_background_block_bottom": "#232323",
         "button_2_background_gradient_block_bottom": "",
-        "button_2_color_hover_block_bottom": "#fff",
+        "button_2_color_hover_block_bottom": "#ffffff",
         "button_2_border_hover_block_bottom": "#232323",
         "button_2_background_hover_block_bottom": "#232323",
         "button_2_background_gradient_hover_block_bottom": "",
@@ -1364,14 +1364,14 @@
   },
   "order": [
     "cc93ff53-7616-492f-b4d0-67072a29ad77",
-    "564ef23b-17d6-4117-ac66-d1d4082a923e",
+    "product_block_mPrf8f",
     "custom_service_block_wziraH",
-    "slide_show_pVVeH9",
-    "0b904cce-a718-4320-b7bc-2097123749ab",
+    "slide_show_rEpRV4",
+    "product_block_ngQrte",
     "brand_slider_pUeALL",
     "ae47af61-27f4-4065-8d5e-c9a7a071878c",
     "c837bb4b-73eb-4503-8784-91bd358e1bc3",
     "5f81b7f6-e831-462b-bd11-190fe8c6bf8f",
-    "custom_service_block_cKBtHD"
+    "custom_service_block_49dRN7"
   ]
 }

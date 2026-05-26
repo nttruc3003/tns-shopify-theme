@@ -17,7 +17,7 @@
                             if product_swatch_option contains option_name
                                 assign is_swatch = true
                             endif
-                            assign swatch_type = settings.swatch_type
+                            assign swatch_type = 'variant_image'
                             assign option_index = forloop.index0
                         -%}
                         <fieldset class="js product-form__input{% if is_swatch %} product-form__swatch{% endif %} clearfix" data-product-attribute="set-rectangle" data-option-index="{{ forloop.index0 }}">

@@ -79,6 +79,7 @@
         "show_page_title": true,
         "page_title_alignment": "left",
         "container": "default",
+        "padding_full_width": 0,
         "mg_top_desktop": 0,
         "mg_top_tablet": 0,
         "mg_top_mobile": 0,
@@ -124,7 +125,6 @@
           "settings": {
             "show_block": true,
             "heading": "",
-            "image": "shopify://shop_images/sidebar.jpg",
             "link": "shopify://collections/belle-doll-featured-products"
           }
         },
@@ -155,6 +155,7 @@
         "mg_bottom_tablet": 0,
         "mg_bottom_mobile": 0,
         "show_sidebar": true,
+        "sidebar_collapse": "collapse",
         "enable_sticky": false,
         "sidebar_layout": "layout_1",
         "sidebar_collapse_default": "expand",
@@ -167,9 +168,11 @@
         "show_filter": true,
         "filter_swatch": "Color",
         "filter_swatch_type": "color",
+        "filter_swatch_layout": "color",
         "filter_rectangle": "Size",
         "filter_display_type": "show-more",
         "max_item_per_filter": 10,
+        "filter_label_all": "",
         "filter_hidden_tag_list": "",
         "show_toolbar": true,
         "show_sorting": true,
@@ -187,7 +190,11 @@
         "link_banner_2": "",
         "show_banner_3": true,
         "banner_position_3": "12",
-        "link_banner_3": ""
+        "link_banner_3": "",
+        "product_space_between_vert_desk": 30,
+        "product_space_between_vert_mb": 16,
+        "product_space_between_horiz_desk": 60,
+        "product_space_between_horiz_mb": 30
       }
     },
     "1649841509249f7e16": {
@@ -197,10 +204,11 @@
           "type": "largeImg",
           "disabled": true,
           "settings": {
-            "image": "shopify://shop_images/collection-banner.jpg",
             "enable_max_width_image": false,
             "custom_width_image": 1170,
             "enable_scroll_down": false,
+            "enable_custom_image": false,
+            "image_behavior": "none",
             "sub_title": "",
             "border_sub_title": false,
             "font_size_sub_title": 14,
@@ -212,10 +220,12 @@
             "color_sub_title": "#232323",
             "color_sub_title_mb": "#ffffff",
             "heading": "#Posuere",
+            "letter_spacing_heading": "",
             "enable_style_italic": false,
             "font_size_heading": 40,
             "font_size_heading_mb": 24,
             "margin_bottom_heading": 20,
+            "font_weight_heading": "600",
             "color_heading": "#232323",
             "color_heading_mb": "#ffffff",
             "border_title": "border_s1",
@@ -238,6 +248,7 @@
             "color_countdown_mb": "#ffffff",
             "countdown_margin_bottom": 35,
             "content_width": 500,
+            "bg_color_content": "",
             "align": "center",
             "align_items": "center",
             "position": "right",
@@ -283,7 +294,6 @@
           "type": "smallImg",
           "settings": {
             "row_reverse": false,
-            "image": "shopify://shop_images/collection-banner.jpg",
             "small_img_block_style": "style_1",
             "enable_divider": true,
             "divider_bg_color": "",
@@ -294,6 +304,7 @@
             "divider_position_from_center": 0,
             "small_banner_bg_color": "#f5f5f5",
             "mg_bottom_icon": 25,
+            "image_behavior": "none",
             "sub_title": "Sample Heading Title Goes Here",
             "letter_spacing_sub_title": "",
             "font_size_sub_title": 16,
@@ -325,6 +336,7 @@
             "icon_style": "style_1",
             "color_icon": "#fff",
             "bg_color_icon": "#000",
+            "button_style": "style_1",
             "btn_text": "Shop Now",
             "link": "shopify://collections/belle-doll-featured-products",
             "button_1_width": 235,
@@ -356,7 +368,9 @@
         "164984150999366ade-0",
         "2a9286bb-b7fa-4a05-afe7-9b921bf5ec7b"
       ],
+      "disabled": true,
       "settings": {
+        "id_section": "",
         "container": "container",
         "padding_full_width": 0,
         "display_type": "slide",

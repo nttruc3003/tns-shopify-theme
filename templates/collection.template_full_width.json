@@ -313,6 +313,7 @@
       "block_order": [
         "cf0ec312-c547-4ffc-95e5-fe512cb488f6"
       ],
+      "disabled": true,
       "settings": {
         "id_section": "",
         "container": "1770",
@@ -379,6 +380,7 @@
       "block_order": [
         "5d524300-536a-46fe-8a5b-d82755095233"
       ],
+      "disabled": true,
       "settings": {
         "container": "1770",
         "padding_full_width": 0,

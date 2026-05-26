@@ -1,0 +1,35 @@
+<div class="bxgy-promo-slot" data-bxgy-slot>
+  <div class="bxgy-promos" data-bxgy-root></div>
+
+  <script type="application/json" data-bxgy-rules-json>
+    [
+      {%- assign seen_products = '|' -%}
+      {%- assign first_rule = true -%}
+
+      {%- for item in cart.items -%}
+        {%- assign p = item.product -%}
+        {%- assign marker = '|' | append: p.id | append: '|' -%}
+
+        {%- unless seen_products contains marker -%}
+          {%- assign seen_products = seen_products | append: p.id | append: '|' -%}
+
+          {%- if p.metafields.custom.bxgy_enabled.value == true
+            and p.metafields.custom.bxgy_buy_qty.value != blank
+            and p.metafields.custom.bxgy_free_qty.value != blank -%}
+
+            {%- unless first_rule -%},{%- endunless -%}
+            {
+              "productId": {{ p.id | json }},
+              "freeVariantId": {{ p.metafields.custom.bxgy_free_variant.value.id | default: item.variant_id | json }},
+              "buyQty": {{ p.metafields.custom.bxgy_buy_qty.value | json }},
+              "freeQty": {{ p.metafields.custom.bxgy_free_qty.value | json }},
+              "label": {{ p.metafields.custom.bxgy_label.value | default: p.title | json }}
+            }
+            {%- assign first_rule = false -%}
+
+          {%- endif -%}
+        {%- endunless -%}
+      {%- endfor -%}
+    ]
+  </script>
+</div>

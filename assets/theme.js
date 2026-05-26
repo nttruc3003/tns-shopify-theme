@@ -22,12 +22,131 @@
     });
 
     var halo = {
-        haloTimeout: null,
-        isAjaxLoading: false,
+    haloTimeout: null,
+    isAjaxLoading: false,
 
-        ready: function (){
-            this.loaderScript();
-            this.loaderProductBlock();
+   getQuantityInput: function($scope) {
+    let $input = $scope.find('input[name="quantity"]:visible').first();
+
+    if (!$input.length) {
+        $input = $scope.find('quantity-input input[name="quantity"]').first();
+    }
+
+    if (!$input.length) {
+        $input = $scope.find('input.quantity__input').first();
+    }
+
+    if (!$input.length) {
+        $input = $scope.find('input[name="quantity"]').first();
+    }
+
+    // Nếu không có input thật thì tự tạo hidden input quantity
+    if (!$input.length) {
+        const $form = $scope.is('form') ? $scope : $scope.closest('form');
+
+        if ($form.length) {
+            $form.append('<input type="hidden" name="quantity" value="1" data-created-quantity="true">');
+            $input = $form.find('input[name="quantity"][data-created-quantity="true"]').first();
+        }
+    }
+
+    return $input;
+},
+
+    syncQuantityInputs: function($scope, qty) {
+        qty = parseInt(qty, 10);
+        if (isNaN(qty) || qty < 1) qty = 1;
+
+        $scope.find('input[name="quantity"]').each(function() {
+            $(this).val(qty).attr('value', qty);
+        });
+
+        const $mainInput = halo.getQuantityInput($scope);
+        if ($mainInput.length) {
+            $mainInput.val(qty).attr('value', qty).trigger('change');
+        }
+
+        return qty;
+    },
+
+   getRealQuantity: function($scope) {
+    let qty = 1;
+
+    // Ưu tiên input thật trước
+    const $visibleNamed = $scope.find('input[name="quantity"]:visible').filter(function() {
+        return !isNaN(parseInt($(this).val(), 10));
+    }).first();
+
+    if ($visibleNamed.length) {
+        qty = parseInt($visibleNamed.val(), 10) || 1;
+        return halo.syncQuantityInputs($scope, qty);
+    }
+
+    const $visibleQtyInput = $scope.find('input.quantity__input:visible').filter(function() {
+        return !isNaN(parseInt($(this).val(), 10));
+    }).first();
+
+    if ($visibleQtyInput.length) {
+        qty = parseInt($visibleQtyInput.val(), 10) || 1;
+        return halo.syncQuantityInputs($scope, qty);
+    }
+
+    // Fallback: đọc số đang hiển thị trong block Quantity
+    let displayQty = null;
+
+    const $quantityLabel = $scope.find('*').filter(function() {
+        const text = ($(this).text() || '').trim().toLowerCase();
+        return text === 'quantity:' || text === 'quantity';
+    }).first();
+
+    if ($quantityLabel.length) {
+        const $container = $quantityLabel.parent();
+
+        const texts = $container.find('*').map(function() {
+            return ($(this).text() || '').trim();
+        }).get();
+
+        for (let i = 0; i < texts.length; i++) {
+            if (/^\d+$/.test(texts[i])) {
+                const n = parseInt(texts[i], 10);
+                if (n > 0 && n < 1000) {
+                    displayQty = n;
+                    break;
+                }
+            }
+        }
+
+        if (!displayQty) {
+            const nextText = ($container.text() || '').match(/\b\d+\b/g);
+            if (nextText && nextText.length) {
+                const n = parseInt(nextText[0], 10);
+                if (n > 0 && n < 1000) {
+                    displayQty = n;
+                }
+            }
+        }
+    }
+
+    if (displayQty) {
+        return halo.syncQuantityInputs($scope, displayQty);
+    }
+
+    // fallback cuối
+    const $anyNamed = $scope.find('input[name="quantity"]').filter(function() {
+        return !isNaN(parseInt($(this).val(), 10));
+    }).first();
+
+    if ($anyNamed.length) {
+        qty = parseInt($anyNamed.val(), 10) || 1;
+        return halo.syncQuantityInputs($scope, qty);
+    }
+
+    return halo.syncQuantityInputs($scope, 1);
+},
+
+    ready: function (){
+        this.loaderScript();
+        this.loaderProductBlock();
             
             if (navigator.userAgent.match(/Mac OS X.*(?:Safari|Chrome)/) && ! navigator.userAgent.match(/Chrome/)) {
                 document.body.classList.add('safari')
@@ -3007,68 +3126,92 @@
         },
 
         initAddToCart: function() {
-            $doc.off('click.addToCart').on('click.addToCart', '[data-btn-addtocart]', (event) => {
-                event.preventDefault();
-                event.stopPropagation();
+    // Sync quantity sau khi bấm +/- hoặc đổi input qty
+    $doc.off('click.qtySync change.qtySync input.qtySync')
+        .on('click.qtySync change.qtySync input.qtySync',
+            'quantity-input button, .quantity__button, .quantity button, input[name="quantity"], input.quantity__input',
+            (event) => {
+                const $form = $(event.target).closest('form');
 
-                var $target = $(event.target),
-                    product = $target.parents('.product-item'),
-                    MobilePopup_Option_2 = $doc.find('#halo-card-mobile-popup'),
-                    ProductQuickShopShown_Option_2 = $doc.find('.quickshop-popup-show');
+                if (!$form.length) return;
 
-                if($target.closest('product-form').length > 0){
-                    var productForm = $target.closest('form');
-                    
-                    halo.actionAddToCart2($target, productForm);
+                setTimeout(() => {
+                    const qty = halo.getRealQuantity($form);
+                    halo.syncQuantityInputs($form, qty);
+                }, 0);
+            }
+        );
+
+    $doc.off('click.addToCart').on('click.addToCart', '[data-btn-addtocart]', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        var $target = $(event.currentTarget),
+            product = $target.parents('.product-item'),
+            MobilePopup_Option_2 = $doc.find('#halo-card-mobile-popup'),
+            ProductQuickShopShown_Option_2 = $doc.find('.quickshop-popup-show');
+
+        if ($target.closest('product-form').length > 0) {
+            var productForm = $target.closest('form');
+            halo.actionAddToCart2($target, productForm);
+        } else {
+            if (!$target.hasClass('is-notify-me') && !$target.hasClass('is-soldout')) {
+                var form = $target.parents('form'),
+                    variantId = form.find('[name="id"]').val(),
+                    qty = halo.getRealQuantity(form),
+                    input = halo.getQuantityInput(form);
+
+                if (qty == undefined || isNaN(qty) || qty < 1) {
+                    qty = 1;
+                }
+
+                halo.syncQuantityInputs(form, qty);
+
+                if ($('.recipient-form').length > 0) {
+                    $('#product-add-to-cart').trigger("click");
                 } else {
-                    if(!$target.hasClass('is-notify-me') && !$target.hasClass('is-soldout')){
-                        var form = $target.parents('form'),
-                            variantId = form.find('[name="id"]').val(),
-                            qty = form.find('[name="quantity"]').val(),
-                            input = form.find('[name="quantity"]').eq(0);
-                        if(qty == undefined){
-                            qty = 1;
-                        }
-
-                        if ($('.recipient-form').length > 0) {
-                            $('#product-add-to-cart').trigger("click");
-                        } else {
-                            halo.actionAddToCart($target, variantId, qty, input);
-                        }
-                    
-                    } else if($target.hasClass('is-notify-me')){
-                        halo.notifyInStockPopup($target);
-                    }
+                    halo.actionAddToCart($target, variantId, qty, input);
                 }
-            });
-            
-            $doc.on('click', '[data-close-add-to-cart-popup]', (event) => {
-                event.preventDefault();
-                event.stopPropagation();
 
+            } else if ($target.hasClass('is-notify-me')) {
+                halo.notifyInStockPopup($target);
+            }
+        }
+    });
+
+    $doc.on('click', '[data-close-add-to-cart-popup]', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+
+        $body.removeClass('add-to-cart-show');
+    });
+
+    $doc.on('click', (event) => {
+        if ($body.hasClass('add-to-cart-show')) {
+            if (($(event.target).closest('[data-add-to-cart-popup]').length === 0)) {
                 $body.removeClass('add-to-cart-show');
-            });
-
-
-            $doc.on('click', (event) => {
-                if($body.hasClass('add-to-cart-show')){
-                    if (($(event.target).closest('[data-add-to-cart-popup]').length === 0)) {
-                        $body.removeClass('add-to-cart-show');
-                    }
-                }
-            });
-        },
+            }
+        }
+    });
+},
 
         actionAddToCart: function($target, variantId, qty, input){
-            var originalMessage = window.variantStrings.submit,
-                waitMessage = window.variantStrings.addingToCart,
-                successMessage = window.variantStrings.addedToCart;
+    qty = parseInt(qty, 10);
+    if (isNaN(qty) || qty < 1) qty = 1;
 
-            if($target.hasClass('button-text-change')){
-                originalMessage = $target.text();
-            }
+    if (input && input.length) {
+        input.val(qty).attr('value', qty).trigger('change');
+    }
 
-            $target.addClass('is-loading');
+    var originalMessage = window.variantStrings.submit,
+        waitMessage = window.variantStrings.addingToCart,
+        successMessage = window.variantStrings.addedToCart;
+
+    if($target.hasClass('button-text-change')){
+        originalMessage = $target.text();
+    }
+
+    $target.addClass('is-loading');
 
             if($body.hasClass('quick-view-show')){
                 Shopify.addItem(variantId, qty, $target, () => {
@@ -3213,158 +3356,182 @@
             }
         },
 
-        actionAddToCart2: function($target, productForm) {
-            const config = fetchConfig('javascript');
-            config.headers['X-Requested-With'] = 'XMLHttpRequest';
-            delete config.headers['Content-Type'];
-            var originalMessage = window.variantStrings.submit,
-                waitMessage = window.variantStrings.addingToCart,
-                successMessage = window.variantStrings.addedToCart;
-            
-            if($target.hasClass('button-text-change')){
-                originalMessage = $target.text();
+    actionAddToCart2: function($target, productForm) {
+    const config = fetchConfig('javascript');
+    config.headers['X-Requested-With'] = 'XMLHttpRequest';
+    delete config.headers['Content-Type'];
+
+    if ($target.hasClass('button-text-change')) {
+        var originalMessage = $target.text();
+    }
+
+    $target.addClass('is-loading');
+
+    let addToCartForm = productForm && productForm.length ? productForm[0] : $target.closest('form')[0];
+
+    if (!addToCartForm) {
+        console.error('Add to cart form not found');
+        $target.removeClass('is-loading');
+        return;
+    }
+
+    const $form = $(addToCartForm);
+    const qty = halo.getRealQuantity($form);
+halo.syncQuantityInputs($form, qty);
+console.log('FINAL ADD TO CART QTY =', qty);
+
+    let formData = new FormData(addToCartForm);
+    formData.set('quantity', qty);
+
+    const properties = addToCartForm.querySelectorAll('.line-item-property__field input[name^="properties"]');
+    properties.forEach(property => {
+        if (property.value == null) return;
+
+        if (property.type === 'file') {
+            if (property.files && property.files[0]) {
+                formData.set(property.name, property.files[0]);
+            }
+        } else {
+            formData.set(property.name, property.value);
+        }
+    });
+
+    const enoughInStock = halo.checkSufficientStock($form);
+    if (!enoughInStock && $body.hasClass('quickshop-popup-show')) {
+        alert(window.cartStrings.addProductOutQuantity);
+        $target.removeClass('is-loading');
+        return;
+    }
+
+    const addItemToCart = (variantId) => {
+        fetch(window.Shopify.routes.root + 'cart/add.js', {
+            ...config,
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .catch((error) => {
+            console.error('Error:', error);
+        })
+        .finally(() => {
+            if ($body.hasClass('quickshop-popup-show')) {
+                $body.removeClass('quickshop-popup-show');
             }
 
-            $target.addClass('is-loading');
-
-            let addToCartForm = document.querySelector('[data-type="add-to-cart-form"]');
-            let formData = new FormData(addToCartForm);
-
-            const properties = document.querySelectorAll('.line-item-property__field input[name^="properties"]')
-
-            properties.forEach(property => {
-              if (property.value == null) return;
-                if (property.type == 'file') {
-                  formData.append(property.name, property.files[0])
+            if ($body.hasClass('quick-view-show')) {
+                if (window.after_add_to_cart.type == 'cart') {
+                    halo.redirectTo(window.routes.cart);
                 } else {
-                  formData.append(property.name, property.value)
+                    Shopify.getCart((cartTotal) => {
+                        $body.find('[data-cart-count]').text(cartTotal.item_count);
+                        $target.removeClass('is-loading');
+
+                        if (cartTotal.item_count >= 100) {
+                            $body.find('.cart-count-bubble [data-cart-count]').text(window.cartStrings.item_99);
+                        }
+                    });
                 }
-            })
+            } else {
+                switch (window.after_add_to_cart.type) {
+                    case 'cart':
+                        halo.redirectTo(window.routes.cart);
+                        break;
 
-            const enoughInStock = halo.checkSufficientStock(productForm);
-            if (!enoughInStock && $body.hasClass('quickshop-popup-show')) {
-                alert(window.cartStrings.addProductOutQuantity);
-                $target.removeClass('is-loading');
-                return 
-            }
+                    case 'quick_cart':
+                        if (window.quick_cart.show) {
+                            Shopify.getCart((cart) => {
+                                if (window.quick_cart.type != 'popup') {
+                                    $body.addClass('cart-sidebar-show');
+                                    halo.updateSidebarCart(cart);
+                                }
 
-            const addItemToCart = (variantId) => {
-                fetch(window.Shopify.routes.root + 'cart/add.js', {...config, ...{
-                        method: 'POST',
-                        body: formData
-                    }
-                })
-                .then(response => {
-                    return response.json();
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                })
-                .finally(() => {
-                    if ($body.hasClass('quickshop-popup-show')) {
-                        $body.removeClass('quickshop-popup-show');
-                    }
-    
-                    if($body.hasClass('quick-view-show')){
-                        if (window.after_add_to_cart.type == 'cart') {
-                            halo.redirectTo(window.routes.cart);
-                        } else {
-                            Shopify.getCart((cartTotal) => {
-                                $body.find('[data-cart-count]').text(cartTotal.item_count);
-                                $target.removeClass('is-loading');
-                                if (cart.item_count >= 100){
+                                if (cart.item_count >= 100) {
                                     $body.find('.cart-count-bubble [data-cart-count]').text(window.cartStrings.item_99);
                                 }
+
+                                $target.removeClass('is-loading');
                             });
-                        }
-                    } else {
-                        switch (window.after_add_to_cart.type) {
-                            case 'cart':
-                                halo.redirectTo(window.routes.cart);
-                            
-                                break;
-                            case 'quick_cart':
-                                if(window.quick_cart.show){
-                                    Shopify.getCart((cart) => {
-                                        if( window.quick_cart.type == 'popup'){
-                                            // $body.addClass('cart-modal-show');
-                                            // halo.updateDropdownCart(cart);
-                                        } else {
-                                            $body.addClass('cart-sidebar-show');
-                                            halo.updateSidebarCart(cart);
-                                        }
-                                        if (cart.item_count >= 100){
-                                            $body.find('.cart-count-bubble [data-cart-count]').text(window.cartStrings.item_99);
-                                        }
-                                        $target.removeClass('is-loading');
-                                    });
-                                } else {
-                                    halo.redirectTo(window.routes.cart);
-                                }
-                                
-                                break;
-                            case 'popup_cart_1':
-                                Shopify.getCart((cart) => {
-                                    halo.updatePopupCart(cart, 1, variantId);
-                                    halo.updateSidebarCart(cart);
-                                    $body.addClass('add-to-cart-show');
-                                    $target.removeClass('is-loading');
-                                    if (cart.item_count >= 100){
-                                        $body.find('.cart-count-bubble [data-cart-count]').text(window.cartStrings.item_99);
-                                    }
-                                });
-    
-                                break;
-                        }
-                    }
-                });
-            }
-
-            fetch(window.Shopify.routes.root + 'cart.js', {
-                method: 'GET',
-            })
-            .then(response => {
-                return response.json();
-            }).then(response => { 
-                const variantId = parseInt($(addToCartForm).serialize().split('id=')[1])
-                const item = response.items.find(item => item.variant_id == variantId)
-                const currentQuantity = item?.quantity 
-                const currentProductId = item?.product_id
-                const moreQuantity = parseInt(productForm.find('[data-inventory-quantity]').val()) 
-                const maxQuantity = parseInt(productForm.find('[data-inventory-quantity]').data('inventory-quantity'))
-                const saleOutStock = document.getElementById('product-add-to-cart').dataset.available === 'true' | false
-
-                if (!currentQuantity || !maxQuantity || saleOutStock) return addItemToCart(variantId)
-                var arrayInVarName = `selling_array_${currentProductId}`,
-                itemInArray = window[arrayInVarName],
-                itemStatus = itemInArray[variantId];
-                if(itemStatus == 'deny') {
-                    if (currentQuantity + moreQuantity > maxQuantity)  {
-                        if(maxQuantity < 0){
-                            addItemToCart(variantId);
                         } else {
-                            const remainingQuantity = maxQuantity - currentQuantity 
-                            throw new Error(`You ${remainingQuantity > 0 ? `can only add ${remainingQuantity}` : 'cannot add'} more of the items into the cart`)
+                            halo.redirectTo(window.routes.cart);
                         }
-                    } else {
-                        addItemToCart(variantId);
-                    }
-                } else {
-                  addItemToCart(variantId);
+                        break;
+
+                    case 'popup_cart_1':
+                        Shopify.getCart((cart) => {
+                            halo.updatePopupCart(cart, 1, variantId);
+                            halo.updateSidebarCart(cart);
+                            $body.addClass('add-to-cart-show');
+                            $target.removeClass('is-loading');
+
+                            if (cart.item_count >= 100) {
+                                $body.find('.cart-count-bubble [data-cart-count]').text(window.cartStrings.item_99);
+                            }
+                        });
+                        break;
+
+                    default:
+                        $target.removeClass('is-loading');
+                        break;
                 }
-            }).catch(err => {
-                this.showWarning(err)
-            }).finally(() => {
-                $target.removeClass('is-loading');
-            })
-        },
+            }
+        });
+    };
+
+    fetch(window.Shopify.routes.root + 'cart.js', {
+        method: 'GET',
+    })
+    .then(response => response.json())
+    .then(response => {
+        const variantId = parseInt(formData.get('id'), 10);
+        const item = response.items.find(item => item.variant_id == variantId);
+        const currentQuantity = item?.quantity || 0;
+        const currentProductId = item?.product_id;
+        const moreQuantity = qty;
+        const maxQuantity = parseInt($form.find('[data-inventory-quantity]').data('inventory-quantity'));
+        const saleOutStock = document.getElementById('product-add-to-cart')?.dataset.available === 'true';
+
+        if (!currentQuantity || !maxQuantity || saleOutStock) {
+            return addItemToCart(variantId);
+        }
+
+        var arrayInVarName = `selling_array_${currentProductId}`,
+            itemInArray = window[arrayInVarName],
+            itemStatus = itemInArray ? itemInArray[variantId] : null;
+
+        if (itemStatus == 'deny') {
+            if (currentQuantity + moreQuantity > maxQuantity) {
+                if (maxQuantity < 0) {
+                    addItemToCart(variantId);
+                } else {
+                    const remainingQuantity = maxQuantity - currentQuantity;
+                    throw new Error(`You ${remainingQuantity > 0 ? `can only add ${remainingQuantity}` : 'cannot add'} more of the items into the cart`);
+                }
+            } else {
+                addItemToCart(variantId);
+            }
+        } else {
+            addItemToCart(variantId);
+        }
+    })
+    .catch(err => {
+        halo.showWarning(err);
+    })
+    .finally(() => {
+        $target.removeClass('is-loading');
+    });
+},
 
         checkSufficientStock: function(productForm) {
-            const maxValidQuantity = productForm.find('[data-inventory-quantity]').data('inventory-quantity')
-            const inputQuantity = parseInt(productForm.find('[data-inventory-quantity]').val())
-            
-            return maxValidQuantity >= inputQuantity
-        },  
+    const $form = productForm && productForm.jquery ? productForm : $(productForm);
+    const $qtyInput = halo.getQuantityInput($form);
+
+    const maxValidQuantity = parseInt($qtyInput.data('inventory-quantity'), 10);
+    const inputQuantity = halo.getRealQuantity($form);
+
+    if (isNaN(maxValidQuantity)) return true;
+
+    return maxValidQuantity >= inputQuantity;
+},
 
         updateContentQuickshopOption3: function(handle){
             var quickShopPopup = $('#halo-quickshop-popup-option-3'),
@@ -7198,3 +7365,341 @@
         }
     }
 })(jQuery);
+
+document.addEventListener('DOMContentLoaded', function () {
+  // Tắt handler add to cart gốc của theme trên product page
+  if (document.body.classList.contains('template-product') && window.jQuery) {
+    jQuery(document).off('click.addToCart');
+  }
+
+  // Theo dõi qty thật mà user đang chọn
+  window.__tnsQty = 1;
+
+  function getProductScope(el) {
+    return el.closest('.halo-productView, .productView, .productView-product, product-form, .product-form');
+  }
+
+  function getQtyFromUI(scope) {
+    if (!scope) return 1;
+
+    // 1) visible input thật
+    const visibleInput =
+      scope.querySelector('input[name="quantity"]:not([type="hidden"])') ||
+      scope.querySelector('input.quantity__input') ||
+      scope.querySelector('quantity-input input');
+
+    if (visibleInput) {
+      const val = parseInt(visibleInput.value, 10);
+      if (!isNaN(val) && val > 0) return val;
+    }
+
+    // 2) số đang hiển thị trong box quantity
+    const quantityBox =
+      scope.querySelector('.quantity') ||
+      scope.querySelector('.productView-quantity') ||
+      scope.querySelector('[class*="quantity"]');
+
+    if (quantityBox) {
+      const texts = Array.from(quantityBox.querySelectorAll('*'))
+        .map(el => (el.textContent || '').trim())
+        .filter(Boolean);
+
+      for (const txt of texts) {
+        if (/^\d+$/.test(txt)) {
+          const n = parseInt(txt, 10);
+          if (!isNaN(n) && n > 0) return n;
+        }
+      }
+
+      const nums = (quantityBox.textContent || '').match(/\b\d+\b/g);
+      if (nums && nums.length) {
+        for (const num of nums) {
+          const n = parseInt(num, 10);
+          if (!isNaN(n) && n > 0) return n;
+        }
+      }
+    }
+
+    return 1;
+  }
+
+  // Luôn cập nhật qty state khi user bấm +/- hoặc đổi input
+  document.addEventListener('click', function (e) {
+    const trigger = e.target.closest('quantity-input button, .quantity__button, .quantity button');
+    if (!trigger) return;
+
+    const scope = getProductScope(trigger);
+    if (!scope) return;
+
+    setTimeout(() => {
+      window.__tnsQty = getQtyFromUI(scope);
+      console.log('SYNC QTY =', window.__tnsQty);
+    }, 30);
+  }, true);
+
+  document.addEventListener('input', function (e) {
+    const target = e.target;
+    if (!target.matches('input[name="quantity"], input.quantity__input')) return;
+
+    const scope = getProductScope(target);
+    if (!scope) return;
+
+    window.__tnsQty = getQtyFromUI(scope);
+    console.log('SYNC QTY =', window.__tnsQty);
+  }, true);
+
+  document.addEventListener('change', function (e) {
+    const target = e.target;
+    if (!target.matches('input[name="quantity"], input.quantity__input')) return;
+
+    const scope = getProductScope(target);
+    if (!scope) return;
+
+    window.__tnsQty = getQtyFromUI(scope);
+    console.log('SYNC QTY =', window.__tnsQty);
+  }, true);
+});
+
+
+document.addEventListener('click', async function (e) {
+  const btn = e.target.closest('[data-btn-addtocart]');
+  if (!btn) return;
+
+  const productView = btn.closest('.halo-productView, .productView, .productView-product, product-form, .product-form');
+  if (!productView) return;
+
+  const form = btn.closest('form') || productView.querySelector('form');
+  if (!form) return;
+
+  const idInput =
+    form.querySelector('input[name="id"]') ||
+    form.querySelector('select[name="id"]');
+
+  if (!idInput || !idInput.value) return;
+
+  const variantId = idInput.value;
+
+  const getQtyFromUI = (scope) => {
+    const visibleInput =
+      scope.querySelector('input[name="quantity"]:not([type="hidden"])') ||
+      scope.querySelector('input.quantity__input') ||
+      scope.querySelector('quantity-input input');
+
+    if (visibleInput) {
+      const val = parseInt(visibleInput.value, 10);
+      if (!isNaN(val) && val > 0) return val;
+    }
+
+    const quantityBox =
+      scope.querySelector('.quantity') ||
+      scope.querySelector('.productView-quantity') ||
+      scope.querySelector('[class*="quantity"]');
+
+    if (quantityBox) {
+      const texts = Array.from(quantityBox.querySelectorAll('*'))
+        .map(el => (el.textContent || '').trim())
+        .filter(Boolean);
+
+      for (const txt of texts) {
+        if (/^\d+$/.test(txt)) {
+          const n = parseInt(txt, 10);
+          if (!isNaN(n) && n > 0) return n;
+        }
+      }
+
+      const nums = (quantityBox.textContent || '').match(/\b\d+\b/g);
+      if (nums && nums.length) {
+        for (const num of nums) {
+          const n = parseInt(num, 10);
+          if (!isNaN(n) && n > 0) return n;
+        }
+      }
+    }
+
+    return 1;
+  };
+
+  const qty = window.__tnsQty && window.__tnsQty > 0 ? window.__tnsQty : getQtyFromUI(productView);
+  console.log('FINAL FORCED QTY =', qty);
+
+  let qtyInput = form.querySelector('input[name="quantity"]');
+  if (!qtyInput) {
+    qtyInput = document.createElement('input');
+    qtyInput.type = 'hidden';
+    qtyInput.name = 'quantity';
+    form.appendChild(qtyInput);
+  }
+  qtyInput.value = String(qty);
+  qtyInput.setAttribute('value', String(qty));
+
+  e.preventDefault();
+  e.stopPropagation();
+  e.stopImmediatePropagation();
+
+  btn.classList.add('is-loading');
+  btn.setAttribute('disabled', 'disabled');
+
+  try {
+    const res = await fetch((window.Shopify?.routes?.root || '/') + 'cart/add.js', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: JSON.stringify({
+        id: variantId,
+        quantity: qty
+      })
+    });
+
+    if (!res.ok) {
+      throw new Error('Add to cart failed');
+    }
+
+    const cartRes = await fetch((window.Shopify?.routes?.root || '/') + 'cart.js', {
+      method: 'GET',
+      headers: { 'Accept': 'application/json' }
+    });
+
+    const cart = await cartRes.json();
+
+    btn.classList.remove('is-loading');
+    btn.removeAttribute('disabled');
+
+    document.querySelectorAll('[data-cart-count]').forEach(el => {
+      el.textContent = cart.item_count;
+    });
+
+    if (cart.item_count >= 100) {
+      document.querySelectorAll('.cart-count-bubble [data-cart-count]').forEach(el => {
+        el.textContent = (window.cartStrings && window.cartStrings.item_99) ? window.cartStrings.item_99 : '99+';
+      });
+    }
+
+    if (window.showAddToCartToast) {
+      window.showAddToCartToast(
+        qty > 1 ? `${qty} items added to cart` : `Item added to cart`,
+        `Cart now has ${cart.item_count} item${cart.item_count > 1 ? 's' : ''}`
+      );
+    }
+
+    const originalHtml = btn.dataset.originalHtml || btn.innerHTML;
+    if (!btn.dataset.originalHtml) {
+      btn.dataset.originalHtml = originalHtml;
+    }
+
+    btn.innerHTML = 'ADDED TO CART';
+
+    setTimeout(() => {
+      btn.innerHTML = btn.dataset.originalHtml || 'ADD TO CART';
+    }, 1200);
+
+  } catch (err) {
+    console.error(err);
+    alert('Add to cart failed. Please try again.');
+    btn.classList.remove('is-loading');
+    btn.removeAttribute('disabled');
+  }
+}, true);
+
+
+(function () {
+  if (document.getElementById('custom-add-to-cart-toast-style')) return;
+
+  const style = document.createElement('style');
+  style.id = 'custom-add-to-cart-toast-style';
+  style.innerHTML = `
+    .custom-atc-toast-wrap {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+    .custom-atc-toast {
+      min-width: 240px;
+      max-width: 320px;
+      background: #111;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,.12);
+      box-shadow: 0 12px 30px rgba(0,0,0,.18);
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 14px;
+      line-height: 1.4;
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: opacity .22s ease, transform .22s ease;
+      pointer-events: none;
+    }
+    .custom-atc-toast.is-show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .custom-atc-toast__title {
+      font-weight: 700;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: .03em;
+      font-size: 12px;
+      opacity: .9;
+    }
+    .custom-atc-toast__text {
+      opacity: .96;
+    }
+      @media (max-width: 767px) {
+    .custom-atc-toast-wrap {
+      top: auto;
+      bottom: 90px;
+      right: 14px;
+      left: 14px;
+    }
+
+    .custom-atc-toast {
+      min-width: 0;
+      max-width: none;
+      width: 100%;
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 13px;
+    }
+  }
+  `;
+  document.head.appendChild(style);
+})();
+
+window.showAddToCartToast = function (message, subtext) {
+  let wrap = document.querySelector('.custom-atc-toast-wrap');
+
+  if (!wrap) {
+    wrap = document.createElement('div');
+    wrap.className = 'custom-atc-toast-wrap';
+    document.body.appendChild(wrap);
+  }
+
+  const toast = document.createElement('div');
+  toast.className = 'custom-atc-toast';
+  toast.innerHTML = `
+    <div class="custom-atc-toast__title">Added to cart</div>
+    <div class="custom-atc-toast__text">${message || 'Item added to cart'}</div>
+    ${subtext ? `<div class="custom-atc-toast__text" style="opacity:.72; margin-top:4px;">${subtext}</div>` : ''}
+  `;
+
+  wrap.appendChild(toast);
+
+  requestAnimationFrame(() => {
+    toast.classList.add('is-show');
+  });
+
+  setTimeout(() => {
+    toast.classList.remove('is-show');
+    setTimeout(() => {
+      toast.remove();
+      if (!wrap.children.length) wrap.remove();
+    }, 220);
+  }, 2200);
+};
