@@ -1,5 +1,6 @@
 (function () {
   'use strict';
+  console.log('[color-family] v=DEBUG-3 loaded');
 
   document.querySelectorAll('[data-cf-block]:not([data-cf-initialized])').forEach(initBlock);
 
@@ -57,7 +58,7 @@
       total: Number(config.familyTotal) || 0,
       totalKnown: true,
       loading: true,
-      hideOOS: canFilter && readPref('hideOOS') === '1',
+      hideOOS: false,
       cart: {},
       familyHasOOS: false,
       pageCursors: { 0: null },
@@ -213,13 +214,22 @@
       if (state.loading) return;
 
       if (!state.items.length) {
-        const q = state.query ? escapeHTML(state.query) : '';
+        const dbg = {
+          mode: isFilterMode() ? 'search/products(query:)' : 'browse/Collection.products',
+          query: JSON.stringify(state.query),
+          hideOOS: state.hideOOS,
+          page: state.page,
+          tagsRaw: JSON.stringify(config.familyTags),
+          tagsCount: familyTags.length,
+          canFilter: canFilter,
+          searchQuery: canFilter ? buildSearchQuery() : 'n/a',
+          totalFromConfig: Number(config.familyTotal)
+        };
         els.grid.innerHTML =
-          '<li class="color-family-switcher__empty">' +
-          (q
-            ? 'No shades match &ldquo;' + q + '&rdquo; in ' + escapeHTML(config.familyName) + '.'
-            : 'No shades in ' + escapeHTML(config.familyName) + '.') +
-          '<br><a href="' + escapeAttr(config.familyUrl) + '">Browse all</a></li>';
+          '<li class="color-family-switcher__empty" style="text-align:left;font-size:11px;color:#333;line-height:1.6;">' +
+          '<strong>DEBUG empty-state — items returned 0</strong><br>' +
+          Object.keys(dbg).map(k => k + ': ' + escapeHTML(String(dbg[k]))).join('<br>') +
+          '</li>';
         return;
       }
 
@@ -447,9 +457,20 @@
       } catch (err) {
         console.error('[color-family] fetch failed', err);
         state.loading = false;
+        const dbg = {
+          err: String(err && err.message || err),
+          stack: String(err && err.stack || '').split('\n').slice(0, 3).join(' | '),
+          mode: isFilterMode() ? 'search' : 'browse',
+          tagsRaw: JSON.stringify(config.familyTags),
+          canFilter: canFilter,
+          searchQuery: canFilter ? buildSearchQuery() : 'n/a',
+          domain: config.shopDomain,
+          tokenLen: config.storefrontToken ? String(config.storefrontToken).length : 0
+        };
         els.grid.innerHTML =
-          '<li class="color-family-switcher__empty">' +
-          'Couldn\'t load shades. <a href="' + escapeAttr(config.familyUrl) + '">View all</a>.' +
+          '<li class="color-family-switcher__empty" style="text-align:left;font-size:11px;color:#333;line-height:1.6;">' +
+          '<strong>DEBUG error</strong><br>' +
+          Object.keys(dbg).map(k => k + ': ' + escapeHTML(String(dbg[k]))).join('<br>') +
           '</li>';
         renderCount();
       }
@@ -481,7 +502,17 @@
     }
 
     function sessionStoreFor(handle) {
-      const prefix = 'cf:' + handle + ':';
+      const VERSION = 'v4';
+      const prefix = 'cf:' + VERSION + ':' + handle + ':';
+      // Purge old-version entries on init
+      try {
+        for (let i = sessionStorage.length - 1; i >= 0; i--) {
+          const k = sessionStorage.key(i);
+          if (k && k.indexOf('cf:') === 0 && k.indexOf(prefix) !== 0 && k.indexOf('cf:pref:') !== 0) {
+            sessionStorage.removeItem(k);
+          }
+        }
+      } catch (e) { /* ignore */ }
       return {
         get(key) {
           try {
