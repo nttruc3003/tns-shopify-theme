@@ -1308,7 +1308,7 @@
                                             style="--spacing-top: {{ spacing_top | append: 'px' }};
                                             --spacing-bottom: {{ spacing_bottom | append: 'px' }}"
                                         >
-                                            {% render 'color-family-combobox', product: product %}
+                                            {% render 'color-family-combobox', product: product, block: block %}
                                         </div>
                                     {%- when 'trust_image' -%}
                                         {%- liquid

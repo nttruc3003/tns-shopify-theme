@@ -31,6 +31,8 @@
       inputWrap: root.querySelector('[data-cfc-input-wrap]'),
       input: root.querySelector('[data-cfc-input]'),
       clear: root.querySelector('[data-cfc-clear]'),
+      inputs: root.querySelectorAll('[data-cfc-input]'),
+      clears: root.querySelectorAll('[data-cfc-clear]'),
       panel: root.querySelector('[data-cfc-panel]'),
       sheetClose: root.querySelector('[data-cfc-close]'),
       sheetTotal: root.querySelector('[data-cfc-sheet-total]'),
@@ -44,6 +46,8 @@
       footer: root.querySelector('[data-cfc-footer]'),
       footerText: root.querySelector('[data-cfc-footer-text]')
     };
+
+    const panelOriginalParent = els.panel.parentNode;
 
     const state = {
       open: false,
@@ -75,18 +79,48 @@
         '}' +
       '}';
 
+    function positionPanel() {
+      if (window.innerWidth <= 768) {
+        els.panel.style.top = '';
+        els.panel.style.left = '';
+        els.panel.style.width = '';
+        els.panel.style.display = '';
+        return;
+      }
+      const rect = els.trigger.getBoundingClientRect();
+      els.panel.style.top = rect.bottom + 'px';
+      els.panel.style.left = rect.left + 'px';
+      els.panel.style.width = rect.width + 'px';
+      els.panel.style.display = 'block';
+    }
+
+    function onScroll() { close(); }
+    function onResize() { positionPanel(); }
+
+    function isMobile() { return window.innerWidth <= 768; }
+
     function open() {
       if (state.open) return;
       state.open = true;
       root.classList.add('is-open');
       els.trigger.setAttribute('aria-expanded', 'true');
+      document.body.appendChild(els.panel);
+      els.panel.classList.add('is-active');
       els.panel.hidden = false;
-      els.triggerBody.hidden = true;
-      els.inputWrap.hidden = false;
-      setTimeout(() => els.input && els.input.focus(), 0);
+      if (!isMobile()) {
+        els.triggerBody.hidden = true;
+        els.inputWrap.hidden = false;
+      }
+      requestAnimationFrame(positionPanel);
+      setTimeout(() => {
+        const visible = Array.from(els.inputs).find((i) => i.offsetParent !== null);
+        if (visible) visible.focus();
+      }, 50);
       if (!state.loaded && !state.loading) loadAll();
       document.addEventListener('mousedown', onOutside);
       document.addEventListener('keydown', onEsc);
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onResize);
     }
 
     function close() {
@@ -97,17 +131,26 @@
       els.panel.hidden = true;
       els.triggerBody.hidden = false;
       els.inputWrap.hidden = true;
-      if (els.input) els.input.value = '';
-      if (els.clear) els.clear.hidden = true;
+      els.inputs.forEach((i) => { i.value = ''; });
+      els.clears.forEach((c) => { c.hidden = true; });
       state.query = '';
       state.debouncedQuery = '';
       state.highlight = -1;
+      els.panel.style.top = '';
+      els.panel.style.left = '';
+      els.panel.style.width = '';
+      els.panel.style.display = '';
+      els.panel.classList.remove('is-active');
+      if (panelOriginalParent) panelOriginalParent.appendChild(els.panel);
       document.removeEventListener('mousedown', onOutside);
       document.removeEventListener('keydown', onEsc);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onResize);
     }
 
     function onOutside(e) {
-      if (!root.contains(e.target)) close();
+      if (root.contains(e.target) || els.panel.contains(e.target)) return;
+      close();
     }
     function onEsc(e) {
       if (e.key === 'Escape') close();
@@ -127,11 +170,12 @@
 
     if (els.sheetClose) els.sheetClose.addEventListener('click', close);
 
-    if (els.input) {
-      let debTimer = null;
-      els.input.addEventListener('input', () => {
-        state.query = els.input.value;
-        if (els.clear) els.clear.hidden = !state.query;
+    let debTimer = null;
+    els.inputs.forEach((input) => {
+      input.addEventListener('input', () => {
+        state.query = input.value;
+        els.inputs.forEach((i) => { if (i !== input) i.value = state.query; });
+        els.clears.forEach((c) => { c.hidden = !state.query; });
         clearTimeout(debTimer);
         debTimer = setTimeout(() => {
           state.debouncedQuery = state.query.trim();
@@ -139,21 +183,22 @@
           render();
         }, DEBOUNCE_MS);
       });
-      els.input.addEventListener('keydown', onKeyDown);
-    }
+      input.addEventListener('keydown', onKeyDown);
+    });
 
-    if (els.clear) {
-      els.clear.addEventListener('click', (e) => {
+    els.clears.forEach((clear) => {
+      clear.addEventListener('click', (e) => {
         e.stopPropagation();
-        if (els.input) els.input.value = '';
+        els.inputs.forEach((i) => { i.value = ''; });
         state.query = '';
         state.debouncedQuery = '';
         state.highlight = -1;
-        els.clear.hidden = true;
+        els.clears.forEach((c) => { c.hidden = true; });
         render();
-        els.input && els.input.focus();
+        const visible = Array.from(els.inputs).find((i) => i.offsetParent !== null);
+        if (visible) visible.focus();
       });
-    }
+    });
 
     if (els.hideOOS) {
       els.hideOOS.addEventListener('change', () => {
@@ -346,13 +391,14 @@
           '</li>';
         const btn = els.listbox.querySelector('[data-cfc-empty-clear]');
         if (btn) btn.addEventListener('click', () => {
-          if (els.input) els.input.value = '';
+          els.inputs.forEach((i) => { i.value = ''; });
           state.query = '';
           state.debouncedQuery = '';
           state.highlight = -1;
-          if (els.clear) els.clear.hidden = true;
+          els.clears.forEach((c) => { c.hidden = true; });
           render();
-          els.input && els.input.focus();
+          const visible = Array.from(els.inputs).find((i) => i.offsetParent !== null);
+          if (visible) visible.focus();
         });
         return;
       }
