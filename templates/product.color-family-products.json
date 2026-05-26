@@ -59,7 +59,6 @@
         },
         "d98e243b-3682-495a-965a-1c7f7d460880": {
           "type": "variant_picker",
-          "disabled": true,
           "settings": {
             "picker_type": "button",
             "show_variant_image_group": false,
@@ -88,6 +87,31 @@
             "fontsize_text": 18,
             "spacing_top": 0,
             "spacing_bottom": 17
+          }
+        },
+        "color_family_combobox_4Hh8Gp": {
+          "type": "color_family_combobox",
+          "settings": {
+            "spacing_top": 16,
+            "spacing_bottom": 0,
+            "trigger_bg_color": "#ffffff",
+            "trigger_border_color": "#cfc7b6",
+            "trigger_title_size": 15,
+            "trigger_title_color": "#232017",
+            "trigger_helper_size": 11,
+            "trigger_helper_color": "#8a8275",
+            "swatch_shape": "circle",
+            "swatch_size": 28,
+            "panel_bg_color": "#ffffff",
+            "highlight_color": "#f3eee5",
+            "row_title_size": 16,
+            "row_title_color": "#232017",
+            "row_meta_size": 12,
+            "row_meta_color": "#8a8275",
+            "accent_color": "#8a5a2b",
+            "cart_pill_bg_color": "#232017",
+            "cart_pill_text_color": "#ffffff",
+            "cart_pill_text_size": 13
           }
         },
         "5d8b9ff9-6a1c-4850-a6c2-e6cdbb8b7f7c": {
@@ -160,6 +184,7 @@
         },
         "color_family_Q7iJFN": {
           "type": "color_family",
+          "disabled": true,
           "settings": {
             "spacing_top": 16,
             "spacing_bottom": 0
@@ -330,6 +355,7 @@
         "d98e243b-3682-495a-965a-1c7f7d460880",
         "0e4ea696-4820-4c98-aaa6-806d41782a3d",
         "4f95b592-8369-4ab0-b30d-24e463fb6890",
+        "color_family_combobox_4Hh8Gp",
         "5d8b9ff9-6a1c-4850-a6c2-e6cdbb8b7f7c",
         "4e59f24a-8859-4579-a80a-d70e6f1bf66b",
         "faa2b3e6-c0a1-4269-baa6-d2605efe4c05",
