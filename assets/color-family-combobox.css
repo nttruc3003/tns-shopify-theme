@@ -18,6 +18,8 @@
   color: var(--tns-ink-2);
 }
 
+.cfc [hidden] { display: none !important; }
+
 .cfc__trigger {
   display: grid;
   grid-template-columns: auto 1fr auto;
