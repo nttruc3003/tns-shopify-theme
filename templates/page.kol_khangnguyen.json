@@ -15,7 +15,7 @@
         "template--14809580109875__cc93ff53-7616-492f-b4d0-67072a29ad77-166658139303cdfc59-0": {
           "type": "largeImg",
           "settings": {
-            "image": "shopify://shop_images/khangnguyen_cover.jpg",
+            "image": "shopify://shop_images/FD4E4791-E9B4-4388-AB3B-AA57D2E70E16.jpg",
             "enable_max_width_image": false,
             "custom_width_image": 1170,
             "enable_scroll_down": false,
@@ -563,6 +563,7 @@
       "block_order": [
         "template--14809580109875__cc93ff53-7616-492f-b4d0-67072a29ad77-166658139303cdfc59-0"
       ],
+      "disabled": true,
       "settings": {
         "id_section": "",
         "container": "fullwidth",
