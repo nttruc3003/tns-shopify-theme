@@ -1,0 +1,32 @@
+query CartInput {
+  cart {
+    attribute(key: "kol_id") {
+      value
+    }
+    lines {
+      id
+      cost {
+        amountPerQuantity {
+          amount
+        }
+        compareAtAmountPerQuantity {
+          amount
+        }
+      }
+      merchandise {
+        __typename
+        ... on ProductVariant {
+          product {
+            metafield(namespace: "custom", key: "kol_discounts") {
+              jsonValue
+            }
+          }
+        }
+      }
+    }
+  }
+  discount {
+    discountClasses
+  }
+}
+

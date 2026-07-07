@@ -1,0 +1,15 @@
+name = "KOL product discount"
+type = "function"
+api_version = "2026-04"
+
+description = "Applies product-level KOL discounts from custom.kol_discounts based on the cart kol_id attribute."
+
+[[extensions.targeting]]
+target = "cart.lines.discounts.generate.run"
+input_query = "src/run.graphql"
+export = "cart-lines-discounts-generate-run"
+
+[extensions.build]
+command = ""
+path = "dist/function.wasm"
+

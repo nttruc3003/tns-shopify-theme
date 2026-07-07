@@ -20,22 +20,61 @@
     assign compare_at_price = target.compare_at_price
     assign price = target.price | default: 1999
     assign available = target.available | default: false
+    assign kol_id = ''
+    assign kol_discount_percent = 0
+    assign kol_discount_price = price
+    assign kol_discount_money_price = ''
+    assign kol_compare_at_price = compare_at_price
+    assign kol_product_is_not_on_sale = false
+
+    assign host = request.host | downcase
+    assign host_parts = host | split: '.'
+    if host_parts.size == 3 and host_parts[1] == 'teamnailsupply' and host_parts[2] == 'com' and host_parts[0] != 'www'
+        assign kol_id = host_parts[0]
+        case host
+            when 'cherrynailartist.teamnailsupply.com'
+                assign kol_id = 'cherrybynails'
+            when 'jtr.teamnailsupply.com'
+                assign kol_id = 'justin'
+        endcase
+    endif
+
+    if compare_at_price == blank or compare_at_price <= price
+        assign kol_product_is_not_on_sale = true
+    endif
+
+    if product != blank and kol_id != blank and product.metafields.custom.kol_discounts != blank and kol_product_is_not_on_sale
+        assign kol_discount_rules = product.metafields.custom.kol_discounts.value
+        assign kol_discount_percent = kol_discount_rules[kol_id] | default: 0 | plus: 0
+        if kol_discount_percent < 1 or kol_discount_percent > 100
+            assign kol_discount_percent = 0
+        endif
+    endif
+
+    if kol_discount_percent > 0
+        assign kol_discount_multiplier = 100 | minus: kol_discount_percent
+        assign kol_discount_price = price | times: kol_discount_multiplier | divided_by: 100
+        assign kol_compare_at_price = price
+    endif
 
     if settings.currency_format_enable
         assign money_price = price | money_with_currency
+        assign kol_discount_money_price = kol_discount_price | money_with_currency
     else
         assign money_price = price | money
+        assign kol_discount_money_price = kol_discount_price | money
     endif 
 
     if target == product and product.price_varies
         assign money_price = 'products.product.price.from_price_html' | t: price: money_price
+        assign kol_discount_money_price = 'products.product.price.from_price_html' | t: price: kol_discount_money_price
     endif
 -%}
 
 <div class="price
     {%- if price_class %} {{ price_class }}{% endif -%}
     {%- if available == false %} price--sold-out {% endif -%}
-    {%- if compare_at_price > price %} price--on-sale {% endif -%}
+    {%- if compare_at_price > price or kol_discount_percent > 0 %} price--on-sale {% endif -%}
     {%- if product.price_varies == false and product.compare_at_price_varies %} price--no-compare{% endif -%}">
     <dl>
         {%- comment -%}
@@ -59,34 +98,47 @@
                 </dt>
             {%- endcomment -%}
             
-            <dd class="price__compare" data-compare="{{compare_at_price}}"><s class="price-item price-item--regular">{% if settings.currency_format_enable %}{{ compare_at_price | money_with_currency }}{% else %}{{ compare_at_price | money }}{% endif %}</s></dd>
+            <dd class="price__compare" data-compare="{{kol_compare_at_price}}"><s class="price-item price-item--regular">{% if settings.currency_format_enable %}{{ kol_compare_at_price | money_with_currency }}{% else %}{{ kol_compare_at_price | money }}{% endif %}</s></dd>
             {%- comment -%}
                 <dt>
                     <span class="visually-hidden visually-hidden--inline">{{ 'products.product.price.sale_price' | t }}</span>
                 </dt>
             {%- endcomment -%}
-            <dd class="price__last{% if settings.show_price_percent %} price_percent{% endif %}" data-last="{{price}}"><span class="price-item price-item--sale">{{ money_price }}</span></dd>
-            {%- if settings.show_saved_price and price != nil and price != blank and compare_at_price != nil and compare_at_price != blank -%}
-                {%- assign saved_price = compare_at_price | minus: price | money -%}
+            <dd class="price__last{% if settings.show_price_percent %} price_percent{% endif %}" data-last="{% if kol_discount_percent > 0 %}{{ kol_discount_price }}{% else %}{{ price }}{% endif %}"><span class="price-item price-item--sale">{% if kol_discount_percent > 0 %}{{ kol_discount_money_price }}{% else %}{{ money_price }}{% endif %}</span></dd>
+            {%- if settings.show_saved_price and price != nil and price != blank and kol_compare_at_price != nil and kol_compare_at_price != blank -%}
+                {%- if kol_discount_percent > 0 -%}
+                    {%- assign saved_price = kol_compare_at_price | minus: kol_discount_price | money -%}
+                {%- else -%}
+                    {%- assign saved_price = compare_at_price | minus: price | money -%}
+                {%- endif -%}
                 <div class="price__saved"><span class="price-item price-item--saved">{{'products.product.price.saved_price_html' | t: price: saved_price }}</span></div>
             {%- endif -%}
 
             {%- if settings.show_price_percent -%}
             <dd class="price__label_sale price__label_percent">
-                {%- liquid 
-                    assign list_compare = product.variants | where: 'compare_at_price'
-                    assign compare = 0
-                    for variant in list_compare
-                        assign saving = variant.compare_at_price | minus: variant.price | times: 100.0 | divided_by: variant.compare_at_price | round
-                        if saving > compare
-                            assign compare = saving
+                {%- liquid
+                    if kol_discount_percent > 0
+                        assign compare = kol_discount_percent
+                    else
+                        assign list_compare = product.variants | where: 'compare_at_price'
+                        assign compare = 0
+                        for variant in list_compare
+                            assign saving = variant.compare_at_price | minus: variant.price | times: 100.0 | divided_by: variant.compare_at_price | round
+                            if saving > compare
+                                assign compare = saving
+                            endif
+                        endfor
+                        if compare  < 1
+                            assign compare = product.compare_at_price_min | minus: product.price_min | times: 100.0 | divided_by: product.compare_at_price_min | round
                         endif
-                    endfor
-                    if compare  < 1
-                        assign compare = product.compare_at_price_min | minus: product.price_min | times: 100.0 | divided_by: product.compare_at_price_min | round
                     endif
                 -%}<span class="label_sale label_sale_percent">(-{{ compare | append: '%'}})</span>
             </dd>
+            {%- endif -%}
+            {%- if kol_discount_percent > 0 -%}
+                <dd class="price__label_sale price__label_kol">
+                    <span class="label_sale label_sale_kol">{{ kol_id | capitalize }} {{ kol_discount_percent }}% off</span>
+                </dd>
             {%- endif -%}
         </div>
         <small class="unit-price caption{% if available == false or product.selected_or_first_available_variant.unit_price_measurement == nil %} hidden{% endif %}">
