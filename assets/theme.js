@@ -3236,9 +3236,6 @@
                                     $('.background-overlay').removeClass('hold');
                                 });
                             } else {
-                                halo.showWarning(window.after_add_to_cart.message_2);
-                                $target.removeClass('is-loading');
-                                halo.showWarning(window.after_add_to_cart.message_2);
                                 Shopify.getCart((cart) => {
                                     $body.find('[data-cart-count]').text(cart.item_count);
                                     if (cart.item_count >= 100){
@@ -3249,7 +3246,18 @@
                                     } else {
                                         $body.find('[data-cart-text]').text(window.cartStrings.items);
                                     }
+
+                                    if (typeof window.showAddToCartToast === 'function') {
+                                        window.showAddToCartToast(
+                                            'Item added to cart',
+                                            `Cart now has ${cart.item_count} item${cart.item_count > 1 ? 's' : ''}`
+                                        );
+                                    }
                                 });
+
+                                $target.removeClass('is-loading');
+                                $('.background-overlay').removeClass('hold');
+                                $body.removeClass('has-warning');
                             }
 
                             break;
@@ -3293,7 +3301,7 @@
                         $('.background-overlay').addClass('hold');
                     }
 
-                    if ($body.hasClass('quick_shop_popup_mobile') && $body.hasClass('quick_shop_option_1') || $body.hasClass('quick_shop_option_2')) {
+                    if ($body.hasClass('quick_shop_popup_mobile') && ($body.hasClass('quick_shop_option_1') || $body.hasClass('quick_shop_option_2'))) {
                         // setTimeout(() => {
                             $body.removeClass('quick_shop_popup_mobile');
                             $doc.find('#halo-card-mobile-popup').removeClass('show');
@@ -3324,7 +3332,6 @@
                                 });
 
                             } else {
-                                halo.showWarning(window.after_add_to_cart.message_2);
                                 Shopify.getCart((cart) => {
                                     $body.find('[data-cart-count]').text(cart.item_count);
                                     if (cart.item_count >= 100){
@@ -3335,7 +3342,18 @@
                                     } else {
                                         $body.find('[data-cart-text]').text(window.cartStrings.items);
                                     }
+
+                                    if (typeof window.showAddToCartToast === 'function') {
+                                        window.showAddToCartToast(
+                                            'Item added to cart',
+                                            `Cart now has ${cart.item_count} item${cart.item_count > 1 ? 's' : ''}`
+                                        );
+                                    }
                                 });
+
+                                $target.removeClass('is-loading');
+                                $body.removeClass('has-warning');
+                                $('.background-overlay').removeClass('hold');
                             }
 
                             break;
@@ -7367,12 +7385,16 @@ console.log('FINAL ADD TO CART QTY =', qty);
 })(jQuery);
 
 document.addEventListener('DOMContentLoaded', function () {
-  // Tắt handler add to cart gốc của theme trên product page
-  if (document.body.classList.contains('template-product') && window.jQuery) {
+  // Không làm gì trên homepage / collection / search
+  if (!document.body.classList.contains('template-product')) {
+    return;
+  }
+
+  // Chỉ tắt handler gốc trên product detail
+  if (window.jQuery) {
     jQuery(document).off('click.addToCart');
   }
 
-  // Theo dõi qty thật mà user đang chọn
   window.__tnsQty = 1;
 
   function getProductScope(el) {
@@ -7462,6 +7484,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 document.addEventListener('click', async function (e) {
+  // Hotfix custom chỉ chạy ở trang chi tiết sản phẩm
+  // Homepage / Collection / Search để Halo theme xử lý mặc định
+  if (!document.body.classList.contains('template-product')) {
+    return;
+  }
+
   const btn = e.target.closest('[data-btn-addtocart]');
   if (!btn) return;
 

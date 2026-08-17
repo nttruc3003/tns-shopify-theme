@@ -15,7 +15,8 @@
         "template--14809580109875__cc93ff53-7616-492f-b4d0-67072a29ad77-166658139303cdfc59-0": {
           "type": "largeImg",
           "settings": {
-            "image": "shopify://shop_images/toannguyen.jpg",
+            "image": "shopify://shop_images/Photoroom_20260716_035448.jpg",
+            "mobile_image": "shopify://shop_images/Photoroom_20260716_035448_90ba7c03-f0df-46a9-956a-ea3e91742ffc.jpg",
             "enable_max_width_image": false,
             "custom_width_image": 1170,
             "enable_scroll_down": false,
