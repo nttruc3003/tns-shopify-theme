@@ -63,7 +63,10 @@
 
         const $mainInput = halo.getQuantityInput($scope);
         if ($mainInput.length) {
-            $mainInput.val(qty).attr('value', qty).trigger('change');
+            // IMPORTANT: do not trigger change here.
+            // initAddToCart listens to change/input; triggering change from
+            // syncQuantityInputs creates an endless event loop on mobile Safari.
+            $mainInput.val(qty).attr('value', qty);
         }
 
         return qty;
@@ -3200,7 +3203,7 @@
     if (isNaN(qty) || qty < 1) qty = 1;
 
     if (input && input.length) {
-        input.val(qty).attr('value', qty).trigger('change');
+        input.val(qty).attr('value', qty);
     }
 
     var originalMessage = window.variantStrings.submit,
@@ -3245,13 +3248,6 @@
                                         $body.find('[data-cart-text]').text(window.cartStrings.item);
                                     } else {
                                         $body.find('[data-cart-text]').text(window.cartStrings.items);
-                                    }
-
-                                    if (typeof window.showAddToCartToast === 'function') {
-                                        window.showAddToCartToast(
-                                            'Item added to cart',
-                                            `Cart now has ${cart.item_count} item${cart.item_count > 1 ? 's' : ''}`
-                                        );
                                     }
                                 });
 
@@ -3298,7 +3294,7 @@
 
                     if ($body.hasClass('show-mobile-options')) {
                         $body.removeClass('show-mobile-options');
-                        $('.background-overlay').addClass('hold');
+                        $('.background-overlay').removeClass('hold');
                     }
 
                     if ($body.hasClass('quick_shop_popup_mobile') && ($body.hasClass('quick_shop_option_1') || $body.hasClass('quick_shop_option_2'))) {
@@ -3341,13 +3337,6 @@
                                         $body.find('[data-cart-text]').text(window.cartStrings.item);
                                     } else {
                                         $body.find('[data-cart-text]').text(window.cartStrings.items);
-                                    }
-
-                                    if (typeof window.showAddToCartToast === 'function') {
-                                        window.showAddToCartToast(
-                                            'Item added to cart',
-                                            `Cart now has ${cart.item_count} item${cart.item_count > 1 ? 's' : ''}`
-                                        );
                                     }
                                 });
 
@@ -3396,7 +3385,6 @@
     const $form = $(addToCartForm);
     const qty = halo.getRealQuantity($form);
 halo.syncQuantityInputs($form, qty);
-console.log('FINAL ADD TO CART QTY =', qty);
 
     let formData = new FormData(addToCartForm);
     formData.set('quantity', qty);
@@ -3456,24 +3444,40 @@ console.log('FINAL ADD TO CART QTY =', qty);
                         break;
 
                     case 'quick_cart':
-                        if (window.quick_cart.show) {
-                            Shopify.getCart((cart) => {
-                                if (window.quick_cart.type != 'popup') {
-                                    $body.addClass('cart-sidebar-show');
-                                    halo.updateSidebarCart(cart);
-                                }
+    if (window.quick_cart.show) {
+        Shopify.getCart((cart) => {
+            if (window.quick_cart.type != 'popup') {
+                $body.addClass('cart-sidebar-show');
+                halo.updateSidebarCart(cart);
+            }
 
-                                if (cart.item_count >= 100) {
-                                    $body.find('.cart-count-bubble [data-cart-count]').text(window.cartStrings.item_99);
-                                }
+            if (cart.item_count >= 100) {
+                $body.find('.cart-count-bubble [data-cart-count]')
+                    .text(window.cartStrings.item_99);
+            }
 
-                                $target.removeClass('is-loading');
-                            });
-                        } else {
-                            halo.redirectTo(window.routes.cart);
-                        }
-                        break;
+            $target.removeClass('is-loading');
+        });
+    } else {
+        // Quick cart/sidebar đang tắt -> ở lại product page
+        Shopify.getCart((cart) => {
+            $body.find('[data-cart-count]').text(cart.item_count);
 
+            if (cart.item_count >= 100) {
+                $body.find('.cart-count-bubble [data-cart-count]')
+                    .text(window.cartStrings.item_99);
+            }
+
+            if (cart.item_count == 1) {
+                $body.find('[data-cart-text]').text(window.cartStrings.item);
+            } else {
+                $body.find('[data-cart-text]').text(window.cartStrings.items);
+            }
+
+            $target.removeClass('is-loading');
+        });
+    }
+    break;
                     case 'popup_cart_1':
                         Shopify.getCart((cart) => {
                             halo.updatePopupCart(cart, 1, variantId);
@@ -6876,8 +6880,8 @@ console.log('FINAL ADD TO CART QTY =', qty);
 
         initLazyloadObserver(loadingImages, productGrid) {
             const setLazyLoaded = (target) => {
-                const card = target.closest('.card')
-                card.classList.add('ajax-loaded')
+                const card = target && target.closest ? target.closest('.card') : null;
+                if (card) card.classList.add('ajax-loaded');
             }
 
             this.lazyloadedObserver = new MutationObserver((mutationList, observer) => {
@@ -6892,7 +6896,11 @@ console.log('FINAL ADD TO CART QTY =', qty);
             const parentObserver = new MutationObserver((mutationlist) => {
                 mutationlist.forEach((mutation) => {
                     if (mutation.type == 'childList') {
-                        const addedLoadingImages = [...mutation.addedNodes].map(node => node.querySelector('.media--loading-effect img'))
+                        const addedLoadingImages = [...mutation.addedNodes].map(node => {
+                            return node && node.nodeType === 1 && node.querySelector
+                                ? node.querySelector('.media--loading-effect img')
+                                : null;
+                        })
                         addedLoadingImages.forEach(image => {
                             if (image) {
                                 this.lazyloadedObserver.observe(image, { childList: true, attributes: true })
@@ -7383,351 +7391,3 @@ console.log('FINAL ADD TO CART QTY =', qty);
         }
     }
 })(jQuery);
-
-document.addEventListener('DOMContentLoaded', function () {
-  // Không làm gì trên homepage / collection / search
-  if (!document.body.classList.contains('template-product')) {
-    return;
-  }
-
-  // Chỉ tắt handler gốc trên product detail
-  if (window.jQuery) {
-    jQuery(document).off('click.addToCart');
-  }
-
-  window.__tnsQty = 1;
-
-  function getProductScope(el) {
-    return el.closest('.halo-productView, .productView, .productView-product, product-form, .product-form');
-  }
-
-  function getQtyFromUI(scope) {
-    if (!scope) return 1;
-
-    // 1) visible input thật
-    const visibleInput =
-      scope.querySelector('input[name="quantity"]:not([type="hidden"])') ||
-      scope.querySelector('input.quantity__input') ||
-      scope.querySelector('quantity-input input');
-
-    if (visibleInput) {
-      const val = parseInt(visibleInput.value, 10);
-      if (!isNaN(val) && val > 0) return val;
-    }
-
-    // 2) số đang hiển thị trong box quantity
-    const quantityBox =
-      scope.querySelector('.quantity') ||
-      scope.querySelector('.productView-quantity') ||
-      scope.querySelector('[class*="quantity"]');
-
-    if (quantityBox) {
-      const texts = Array.from(quantityBox.querySelectorAll('*'))
-        .map(el => (el.textContent || '').trim())
-        .filter(Boolean);
-
-      for (const txt of texts) {
-        if (/^\d+$/.test(txt)) {
-          const n = parseInt(txt, 10);
-          if (!isNaN(n) && n > 0) return n;
-        }
-      }
-
-      const nums = (quantityBox.textContent || '').match(/\b\d+\b/g);
-      if (nums && nums.length) {
-        for (const num of nums) {
-          const n = parseInt(num, 10);
-          if (!isNaN(n) && n > 0) return n;
-        }
-      }
-    }
-
-    return 1;
-  }
-
-  // Luôn cập nhật qty state khi user bấm +/- hoặc đổi input
-  document.addEventListener('click', function (e) {
-    const trigger = e.target.closest('quantity-input button, .quantity__button, .quantity button');
-    if (!trigger) return;
-
-    const scope = getProductScope(trigger);
-    if (!scope) return;
-
-    setTimeout(() => {
-      window.__tnsQty = getQtyFromUI(scope);
-      console.log('SYNC QTY =', window.__tnsQty);
-    }, 30);
-  }, true);
-
-  document.addEventListener('input', function (e) {
-    const target = e.target;
-    if (!target.matches('input[name="quantity"], input.quantity__input')) return;
-
-    const scope = getProductScope(target);
-    if (!scope) return;
-
-    window.__tnsQty = getQtyFromUI(scope);
-    console.log('SYNC QTY =', window.__tnsQty);
-  }, true);
-
-  document.addEventListener('change', function (e) {
-    const target = e.target;
-    if (!target.matches('input[name="quantity"], input.quantity__input')) return;
-
-    const scope = getProductScope(target);
-    if (!scope) return;
-
-    window.__tnsQty = getQtyFromUI(scope);
-    console.log('SYNC QTY =', window.__tnsQty);
-  }, true);
-});
-
-
-document.addEventListener('click', async function (e) {
-  // Hotfix custom chỉ chạy ở trang chi tiết sản phẩm
-  // Homepage / Collection / Search để Halo theme xử lý mặc định
-  if (!document.body.classList.contains('template-product')) {
-    return;
-  }
-
-  const btn = e.target.closest('[data-btn-addtocart]');
-  if (!btn) return;
-
-  const productView = btn.closest('.halo-productView, .productView, .productView-product, product-form, .product-form');
-  if (!productView) return;
-
-  const form = btn.closest('form') || productView.querySelector('form');
-  if (!form) return;
-
-  const idInput =
-    form.querySelector('input[name="id"]') ||
-    form.querySelector('select[name="id"]');
-
-  if (!idInput || !idInput.value) return;
-
-  const variantId = idInput.value;
-
-  const getQtyFromUI = (scope) => {
-    const visibleInput =
-      scope.querySelector('input[name="quantity"]:not([type="hidden"])') ||
-      scope.querySelector('input.quantity__input') ||
-      scope.querySelector('quantity-input input');
-
-    if (visibleInput) {
-      const val = parseInt(visibleInput.value, 10);
-      if (!isNaN(val) && val > 0) return val;
-    }
-
-    const quantityBox =
-      scope.querySelector('.quantity') ||
-      scope.querySelector('.productView-quantity') ||
-      scope.querySelector('[class*="quantity"]');
-
-    if (quantityBox) {
-      const texts = Array.from(quantityBox.querySelectorAll('*'))
-        .map(el => (el.textContent || '').trim())
-        .filter(Boolean);
-
-      for (const txt of texts) {
-        if (/^\d+$/.test(txt)) {
-          const n = parseInt(txt, 10);
-          if (!isNaN(n) && n > 0) return n;
-        }
-      }
-
-      const nums = (quantityBox.textContent || '').match(/\b\d+\b/g);
-      if (nums && nums.length) {
-        for (const num of nums) {
-          const n = parseInt(num, 10);
-          if (!isNaN(n) && n > 0) return n;
-        }
-      }
-    }
-
-    return 1;
-  };
-
-  const qty = window.__tnsQty && window.__tnsQty > 0 ? window.__tnsQty : getQtyFromUI(productView);
-  console.log('FINAL FORCED QTY =', qty);
-
-  let qtyInput = form.querySelector('input[name="quantity"]');
-  if (!qtyInput) {
-    qtyInput = document.createElement('input');
-    qtyInput.type = 'hidden';
-    qtyInput.name = 'quantity';
-    form.appendChild(qtyInput);
-  }
-  qtyInput.value = String(qty);
-  qtyInput.setAttribute('value', String(qty));
-
-  e.preventDefault();
-  e.stopPropagation();
-  e.stopImmediatePropagation();
-
-  btn.classList.add('is-loading');
-  btn.setAttribute('disabled', 'disabled');
-
-  try {
-    const res = await fetch((window.Shopify?.routes?.root || '/') + 'cart/add.js', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest'
-      },
-      body: JSON.stringify({
-        id: variantId,
-        quantity: qty
-      })
-    });
-
-    if (!res.ok) {
-      throw new Error('Add to cart failed');
-    }
-
-    const cartRes = await fetch((window.Shopify?.routes?.root || '/') + 'cart.js', {
-      method: 'GET',
-      headers: { 'Accept': 'application/json' }
-    });
-
-    const cart = await cartRes.json();
-
-    btn.classList.remove('is-loading');
-    btn.removeAttribute('disabled');
-
-    document.querySelectorAll('[data-cart-count]').forEach(el => {
-      el.textContent = cart.item_count;
-    });
-
-    if (cart.item_count >= 100) {
-      document.querySelectorAll('.cart-count-bubble [data-cart-count]').forEach(el => {
-        el.textContent = (window.cartStrings && window.cartStrings.item_99) ? window.cartStrings.item_99 : '99+';
-      });
-    }
-
-    if (window.showAddToCartToast) {
-      window.showAddToCartToast(
-        qty > 1 ? `${qty} items added to cart` : `Item added to cart`,
-        `Cart now has ${cart.item_count} item${cart.item_count > 1 ? 's' : ''}`
-      );
-    }
-
-    const originalHtml = btn.dataset.originalHtml || btn.innerHTML;
-    if (!btn.dataset.originalHtml) {
-      btn.dataset.originalHtml = originalHtml;
-    }
-
-    btn.innerHTML = 'ADDED TO CART';
-
-    setTimeout(() => {
-      btn.innerHTML = btn.dataset.originalHtml || 'ADD TO CART';
-    }, 1200);
-
-  } catch (err) {
-    console.error(err);
-    alert('Add to cart failed. Please try again.');
-    btn.classList.remove('is-loading');
-    btn.removeAttribute('disabled');
-  }
-}, true);
-
-
-(function () {
-  if (document.getElementById('custom-add-to-cart-toast-style')) return;
-
-  const style = document.createElement('style');
-  style.id = 'custom-add-to-cart-toast-style';
-  style.innerHTML = `
-    .custom-atc-toast-wrap {
-      position: fixed;
-      top: 24px;
-      right: 24px;
-      z-index: 99999;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      pointer-events: none;
-    }
-    .custom-atc-toast {
-      min-width: 240px;
-      max-width: 320px;
-      background: #111;
-      color: #fff;
-      border: 1px solid rgba(255,255,255,.12);
-      box-shadow: 0 12px 30px rgba(0,0,0,.18);
-      border-radius: 10px;
-      padding: 14px 16px;
-      font-size: 14px;
-      line-height: 1.4;
-      opacity: 0;
-      transform: translateY(-8px);
-      transition: opacity .22s ease, transform .22s ease;
-      pointer-events: none;
-    }
-    .custom-atc-toast.is-show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .custom-atc-toast__title {
-      font-weight: 700;
-      margin-bottom: 4px;
-      text-transform: uppercase;
-      letter-spacing: .03em;
-      font-size: 12px;
-      opacity: .9;
-    }
-    .custom-atc-toast__text {
-      opacity: .96;
-    }
-      @media (max-width: 767px) {
-    .custom-atc-toast-wrap {
-      top: auto;
-      bottom: 90px;
-      right: 14px;
-      left: 14px;
-    }
-
-    .custom-atc-toast {
-      min-width: 0;
-      max-width: none;
-      width: 100%;
-      border-radius: 12px;
-      padding: 12px 14px;
-      font-size: 13px;
-    }
-  }
-  `;
-  document.head.appendChild(style);
-})();
-
-window.showAddToCartToast = function (message, subtext) {
-  let wrap = document.querySelector('.custom-atc-toast-wrap');
-
-  if (!wrap) {
-    wrap = document.createElement('div');
-    wrap.className = 'custom-atc-toast-wrap';
-    document.body.appendChild(wrap);
-  }
-
-  const toast = document.createElement('div');
-  toast.className = 'custom-atc-toast';
-  toast.innerHTML = `
-    <div class="custom-atc-toast__title">Added to cart</div>
-    <div class="custom-atc-toast__text">${message || 'Item added to cart'}</div>
-    ${subtext ? `<div class="custom-atc-toast__text" style="opacity:.72; margin-top:4px;">${subtext}</div>` : ''}
-  `;
-
-  wrap.appendChild(toast);
-
-  requestAnimationFrame(() => {
-    toast.classList.add('is-show');
-  });
-
-  setTimeout(() => {
-    toast.classList.remove('is-show');
-    setTimeout(() => {
-      toast.remove();
-      if (!wrap.children.length) wrap.remove();
-    }, 220);
-  }, 2200);
-};
